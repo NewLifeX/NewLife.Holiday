@@ -87,8 +87,93 @@ public class ChinaHoliday : IHoliday
             }
         }
 
+        // 强制性假期
+        if (TryGetYuandan(date, out var holiday)) return holiday;
+        if (TryGetQingming(date, out holiday)) return holiday;
+        if (TryGetLaodong(date, out holiday)) return holiday;
+        if (TryGetGuoqing(date, out holiday)) return holiday;
+
         return null;
     }
 
+    /// <summary>尝试获取元旦假期</summary>
+    /// <param name="date"></param>
+    /// <param name="holiday"></param>
+    /// <returns></returns>
+    public Boolean TryGetYuandan(DateTime date, out HolidayInfo holiday)
+    {
+        holiday = null;
+        if (date.Month != 1 || date.Day != 1) return false;
+
+        holiday = new HolidayInfo
+        {
+            Name = "元旦",
+            Date = date.Date,
+            Days = 1,
+            Status = HolidayStatus.On
+        };
+
+        return true;
+    }
+
+    /// <summary>尝试获取清明节假期</summary>
+    /// <param name="date"></param>
+    /// <param name="holiday"></param>
+    /// <returns></returns>
+    public Boolean TryGetQingming(DateTime date, out HolidayInfo holiday)
+    {
+        holiday = null;
+        if (date.Month != 4 || date.Day != 5) return false;
+
+        holiday = new HolidayInfo
+        {
+            Name = "清明节",
+            Date = date.Date,
+            Days = 1,
+            Status = HolidayStatus.On
+        };
+
+        return true;
+    }
+
+    /// <summary>尝试获取劳动节假期</summary>
+    /// <param name="date"></param>
+    /// <param name="holiday"></param>
+    /// <returns></returns>
+    public Boolean TryGetLaodong(DateTime date, out HolidayInfo holiday)
+    {
+        holiday = null;
+        if (date.Month != 5 || date.Day != 1) return false;
+
+        holiday = new HolidayInfo
+        {
+            Name = "劳动节",
+            Date = date.Date,
+            Days = 3,
+            Status = HolidayStatus.On
+        };
+
+        return true;
+    }
+
+    /// <summary>尝试获取国庆节假期</summary>
+    /// <param name="date"></param>
+    /// <param name="holiday"></param>
+    /// <returns></returns>
+    public Boolean TryGetGuoqing(DateTime date, out HolidayInfo holiday)
+    {
+        holiday = null;
+        if (date.Month != 10 || date.Day != 1) return false;
+
+        holiday = new HolidayInfo
+        {
+            Name = "国庆节",
+            Date = date.Date,
+            Days = 3,
+            Status = HolidayStatus.On
+        };
+
+        return true;
+    }
     #endregion
 }
