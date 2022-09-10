@@ -82,8 +82,8 @@ public class ChinaHoliday : IHoliday
             // 多天
             if (inf.Days > 1)
             {
-                var d = (date - inf.Date).TotalDays;
-                if (d > 0 && d <= inf.Days) return inf;
+                var d = (Int32)(date - inf.Date).TotalDays;
+                if (d >= 0 && d < inf.Days) return inf;
             }
         }
 
