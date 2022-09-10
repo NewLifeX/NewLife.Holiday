@@ -18,6 +18,16 @@ var dt = "2022-09-10".ToDateTime();
 var rs = dt.IsChinaHoliday();
 ```
 
+## 广西三月三
+项目从Nuget引用 `NewLife.Holiday` ，代码中引入命名空间 `NewLife.Holiday`  即可使用DateTime扩展方法 IsGuangxiHoliday。  
+``` csharp
+using NewLife.Holiday;
+
+// var dt = DateTime.Now;
+var dt = "2022-04-02".ToDateTime();
+var rs = dt.IsGuangxiHoliday();
+```
+
 ## 新生命项目矩阵
 各项目默认支持net6.0/netstandard2.1，旧版（2021.1225）支持net5.0/netstandard2.0/net4.5/net4.0/net2.0  
 
