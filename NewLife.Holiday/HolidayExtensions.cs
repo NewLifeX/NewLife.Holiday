@@ -14,7 +14,7 @@ public static class HolidayExtensions
     /// <returns></returns>
     public static Boolean IsChinaHoliday(this DateTime date)
     {
-        var inf = China.Query(date);
+        var inf = China.Query(date).FirstOrDefault();
         if (inf != null)
         {
             switch (inf.Status)
@@ -38,9 +38,13 @@ public static class HolidayExtensions
     /// <returns></returns>
     public static Boolean IsGuangxiHoliday(this DateTime date)
     {
-        var inf = Guangxi.Query(date);
-        if (inf != null)
+        var infs = Guangxi.Query(date).ToList();
+        if (infs.Any())
         {
+            // 优先广西
+            var inf = infs.FirstOrDefault(e => e.Category == "Guangxi");
+            inf ??= infs[0];
+
             switch (inf.Status)
             {
                 case HolidayStatus.Normal:

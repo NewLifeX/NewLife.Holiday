@@ -22,8 +22,8 @@ public class ChinaHoliday : IHoliday
     }
 
     /// <summary>加载指定前缀的资源</summary>
-    /// <param name="prefix"></param>
-    protected virtual void Load(String prefix)
+    /// <param name="category"></param>
+    protected virtual void Load(String category)
     {
         // 加载所有嵌入式资源
         var asm = Assembly.GetExecutingAssembly();
@@ -31,10 +31,10 @@ public class ChinaHoliday : IHoliday
 
         foreach (var item in names)
         {
-            if (item.EndsWithIgnoreCase(".csv") && item.Contains($".{prefix}."))
+            if (item.EndsWithIgnoreCase(".csv") && item.Contains($".{category}."))
             {
                 var ms = asm.GetManifestResourceStream(item);
-                Load(ms);
+                Load(ms, category);
             }
         }
     }
@@ -43,7 +43,8 @@ public class ChinaHoliday : IHoliday
     #region 方法
     /// <summary>加载Csv数据流中的数据</summary>
     /// <param name="stream"></param>
-    public void Load(Stream stream)
+    /// <param name="category"></param>
+    public void Load(Stream stream, String category)
     {
         using var csv = new CsvFile(stream, true);
 
@@ -58,6 +59,7 @@ public class ChinaHoliday : IHoliday
             var info = new HolidayInfo
             {
                 Name = line[0],
+                Category = category,
                 Date = line[1].ToDateTime().Date,
                 Days = line[2].ToInt(),
                 Status = (HolidayStatus)line[3].ToInt(),
@@ -76,32 +78,45 @@ public class ChinaHoliday : IHoliday
     /// <summary>查询指定日期的假期信息</summary>
     /// <param name="date">指定日期</param>
     /// <returns>假期信息</returns>
-    public HolidayInfo Query(DateTime date)
+    public IEnumerable<HolidayInfo> Query(DateTime date)
     {
         var list = Infos;
-        if (list == null || list.Count == 0) return null;
+        if (list == null || list.Count == 0) yield break;
 
         // 列表数据少于1000行，直接遍历性能很快
         date = date.Date;
+        var count = 0;
         foreach (var inf in list)
         {
-            if (inf.Date == date) return inf;
+            // 后面的数据不会再匹配
+            if (inf.Date > date) break;
+
+            if (inf.Date == date)
+            {
+                count++;
+                yield return inf;
+            }
 
             // 多天
             if (inf.Days > 1)
             {
                 var d = (Int32)(date - inf.Date).TotalDays;
-                if (d >= 0 && d < inf.Days) return inf;
+                if (d >= 0 && d < inf.Days)
+                {
+                    count++;
+                    yield return inf;
+                }
             }
         }
 
-        // 强制性假期
-        if (TryGetYuandan(date, out var holiday)) return holiday;
-        if (TryGetQingming(date, out holiday)) return holiday;
-        if (TryGetLaodong(date, out holiday)) return holiday;
-        if (TryGetGuoqing(date, out holiday)) return holiday;
-
-        return null;
+        // 如果前面没有匹配，强制性假期
+        if (count == 0)
+        {
+            if (TryGetYuandan(date, out var holiday)) yield return holiday;
+            if (TryGetQingming(date, out holiday)) yield return holiday;
+            if (TryGetLaodong(date, out holiday)) yield return holiday;
+            if (TryGetGuoqing(date, out holiday)) yield return holiday;
+        }
     }
 
     /// <summary>尝试获取元旦假期</summary>

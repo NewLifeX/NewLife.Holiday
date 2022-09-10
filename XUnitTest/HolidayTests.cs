@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using NewLife.Holiday;
 using Xunit;
 
@@ -48,7 +49,7 @@ public class HolidayTests
 
         Assert.True(rs);
 
-        var inf = HolidayExtensions.China.Query(dt);
+        var inf = HolidayExtensions.China.Query(dt).FirstOrDefault();
         Assert.NotNull(inf);
         Assert.Equal("元旦", inf.Name);
 
@@ -72,7 +73,7 @@ public class HolidayTests
 
         Assert.True(rs);
 
-        var inf = HolidayExtensions.China.Query(dt);
+        var inf = HolidayExtensions.China.Query(dt).FirstOrDefault();
         Assert.NotNull(inf);
         Assert.Equal("清明节", inf.Name);
 
@@ -96,7 +97,7 @@ public class HolidayTests
 
         Assert.True(rs);
 
-        var inf = HolidayExtensions.China.Query(dt);
+        var inf = HolidayExtensions.China.Query(dt).FirstOrDefault();
         Assert.NotNull(inf);
         Assert.Equal("劳动节", inf.Name);
         Assert.True(inf.Days >= 3);
@@ -122,7 +123,7 @@ public class HolidayTests
 
         Assert.True(rs);
 
-        var inf = HolidayExtensions.China.Query(dt);
+        var inf = HolidayExtensions.China.Query(dt).FirstOrDefault();
         Assert.NotNull(inf);
         Assert.Equal("国庆节", inf.Name);
         Assert.True(inf.Days >= 3);

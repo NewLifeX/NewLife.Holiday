@@ -9,6 +9,9 @@ public class HolidayInfo
     /// <summary>名称</summary>
     public String Name { get; set; }
 
+    /// <summary>分类</summary>
+    public String Category { get;set; }
+
     /// <summary>日期</summary>
     public DateTime Date { get; set; }
 
