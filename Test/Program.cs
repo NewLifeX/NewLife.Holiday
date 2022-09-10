@@ -1,4 +1,5 @@
-﻿using NewLife.Log;
+﻿using NewLife.Holiday;
+using NewLife.Log;
 using NewLife.Net;
 using NewLife.Security;
 
@@ -33,7 +34,11 @@ namespace Test
 
         private static void Test1()
         {
-
+            var ch = new ChinaHoliday();
+            foreach (var item in ch.Infos)
+            {
+                XTrace.WriteLine("{0} {1} {2} {3}", item.Name, item.Date, item.Days, item.Status);
+            }
         }
     }
 }

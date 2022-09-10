@@ -50,4 +50,12 @@
   <ItemGroup>
     <PackageReference Include="NewLife.Core" Version="10.0.2022.901" />
   </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="China\**\*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="China\" />
+  </ItemGroup>
 </Project>
