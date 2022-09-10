@@ -53,9 +53,6 @@
 
   <ItemGroup>
     <EmbeddedResource Include="China\**\*" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="China\" />
+    <EmbeddedResource Include="Guangxi\**\*" />
   </ItemGroup>
 </Project>

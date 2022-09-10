@@ -15,20 +15,28 @@ public class ChinaHoliday : IHoliday
     /// <summary>实例化</summary>
     public ChinaHoliday()
     {
+        Load("China");
+
+        // 排序，先按照日期排，再按照状态排，便于放假优先覆盖调休
+        if (Infos is List<HolidayInfo> list) Infos = list.OrderBy(x => x.Date).ThenBy(e => e.Status).ToList();
+    }
+
+    /// <summary>加载指定前缀的资源</summary>
+    /// <param name="prefix"></param>
+    protected virtual void Load(String prefix)
+    {
         // 加载所有嵌入式资源
         var asm = Assembly.GetExecutingAssembly();
         var names = asm.GetManifestResourceNames();
 
         foreach (var item in names)
         {
-            if (item.EndsWithIgnoreCase(".csv"))
+            if (item.EndsWithIgnoreCase(".csv") && item.Contains($".{prefix}."))
             {
                 var ms = asm.GetManifestResourceStream(item);
                 Load(ms);
             }
         }
-
-        if (Infos is List<HolidayInfo> list) list = list.OrderBy(x => x.Date).ToList();
     }
     #endregion
 
