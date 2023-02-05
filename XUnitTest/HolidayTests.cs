@@ -137,4 +137,79 @@ public class HolidayTests
         Assert.Equal("国庆节", hi.Name);
         Assert.True(inf.Days >= 3);
     }
+
+    [Theory]
+    [InlineData("2029/2/12")]
+    [InlineData("2029/2/13")]
+    [InlineData("2029/2/14")]
+    [InlineData("2029/2/15")]
+    public void Test春节2(String date)
+    {
+        var dt = date.ToDateTime();
+        var rs = dt.IsChinaHoliday();
+
+        Assert.True(rs);
+
+        var inf = HolidayExtensions.China.Query(dt).FirstOrDefault();
+        Assert.NotNull(inf);
+        Assert.Equal("春节", inf.Name);
+        Assert.True(inf.Days >= 3);
+
+        var hd = HolidayExtensions.China as ChinaHoliday;
+        Assert.NotNull(hd);
+
+        rs = hd.TryGetChunjie(dt, out var hi);
+        Assert.True(rs);
+        Assert.NotNull(hi);
+        Assert.Equal("春节", hi.Name);
+        Assert.True(inf.Days >= 3);
+    }
+
+    [Theory]
+    [InlineData("2029/6/16")]
+    public void Test端午节(String date)
+    {
+        var dt = date.ToDateTime();
+        var rs = dt.IsChinaHoliday();
+
+        Assert.True(rs);
+
+        var inf = HolidayExtensions.China.Query(dt).FirstOrDefault();
+        Assert.NotNull(inf);
+        Assert.Equal("端午节", inf.Name);
+        Assert.True(inf.Days >= 1);
+
+        var hd = HolidayExtensions.China as ChinaHoliday;
+        Assert.NotNull(hd);
+
+        rs = hd.TryGetDuanwu(dt, out var hi);
+        Assert.True(rs);
+        Assert.NotNull(hi);
+        Assert.Equal("端午节", hi.Name);
+        Assert.True(inf.Days >= 1);
+    }
+
+    [Theory]
+    [InlineData("2029/9/22")]
+    public void Test中秋节(String date)
+    {
+        var dt = date.ToDateTime();
+        var rs = dt.IsChinaHoliday();
+
+        Assert.True(rs);
+
+        var inf = HolidayExtensions.China.Query(dt).FirstOrDefault();
+        Assert.NotNull(inf);
+        Assert.Equal("中秋节", inf.Name);
+        Assert.True(inf.Days >= 1);
+
+        var hd = HolidayExtensions.China as ChinaHoliday;
+        Assert.NotNull(hd);
+
+        rs = hd.TryGetZhongqiu(dt, out var hi);
+        Assert.True(rs);
+        Assert.NotNull(hi);
+        Assert.Equal("中秋节", hi.Name);
+        Assert.True(inf.Days >= 1);
+    }
 }

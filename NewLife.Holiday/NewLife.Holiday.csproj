@@ -5,8 +5,8 @@
     <AssemblyTitle>中国假期识别库</AssemblyTitle>
     <Description>中国假期识别库，内置假期调休数据库，每年维护更新。</Description>
     <Company>新生命开发团队</Company>
-    <Copyright>版权所有(C) 新生命开发团队 2002~2022</Copyright>
-    <VersionPrefix>1.0</VersionPrefix>
+    <Copyright>版权所有(C) 新生命开发团队 2002~2023</Copyright>
+    <VersionPrefix>1.1</VersionPrefix>
     <VersionSuffix>$([System.DateTime]::Now.ToString(`yyyy.MMdd`))</VersionSuffix>
     <Version>$(VersionPrefix).$(VersionSuffix)</Version>
     <FileVersion>$(Version)</FileVersion>
@@ -23,12 +23,12 @@
   <PropertyGroup>
     <PackageId>$(AssemblyName)</PackageId>
     <Authors>$(Company)</Authors>
-    <ProjectUrl>https://newlifex.com/core</ProjectUrl>
+    <ProjectUrl>https://newlifex.com</ProjectUrl>
     <PackageIcon>leaf.png</PackageIcon>
-    <RepositoryUrl>https://github.com/NewLifeX/NewLife.MQTT</RepositoryUrl>
+    <RepositoryUrl>https://github.com/NewLifeX/NewLife.Holiday</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>新生命团队;X组件;NewLife;$(AssemblyName)</PackageTags>
-    <PackageReleaseNotes>中国假期识别库，内置假期调休数据库，每年维护更新。</PackageReleaseNotes>
+    <PackageReleaseNotes>中国假期识别库，内置假期调休数据库，每年维护更新，支持自动识别农历节假日</PackageReleaseNotes>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
@@ -48,7 +48,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="NewLife.Core" Version="10.0.2022.901" />
+    <PackageReference Include="NewLife.Core" Version="10.1.2023.203" />
   </ItemGroup>
 
   <ItemGroup>

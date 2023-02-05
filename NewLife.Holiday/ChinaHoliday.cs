@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Globalization;
+using System.Reflection;
 using NewLife.IO;
 
 namespace NewLife.Holiday;
@@ -78,7 +79,7 @@ public class ChinaHoliday : IHoliday
     /// <summary>查询指定日期的假期信息</summary>
     /// <param name="date">指定日期</param>
     /// <returns>假期信息</returns>
-    public IEnumerable<HolidayInfo> Query(DateTime date)
+    public virtual IEnumerable<HolidayInfo> Query(DateTime date)
     {
         var list = Infos;
         if (list == null || list.Count == 0) yield break;
@@ -116,6 +117,9 @@ public class ChinaHoliday : IHoliday
             if (TryGetQingming(date, out holiday)) yield return holiday;
             if (TryGetLaodong(date, out holiday)) yield return holiday;
             if (TryGetGuoqing(date, out holiday)) yield return holiday;
+            if (TryGetChunjie(date, out holiday)) yield return holiday;
+            if (TryGetDuanwu(date, out holiday)) yield return holiday;
+            if (TryGetZhongqiu(date, out holiday)) yield return holiday;
         }
     }
 
@@ -197,6 +201,109 @@ public class ChinaHoliday : IHoliday
         };
 
         return true;
+    }
+
+    /// <summary>尝试获取春节假期</summary>
+    /// <param name="date"></param>
+    /// <param name="holiday"></param>
+    /// <returns></returns>
+    public Boolean TryGetChunjie(DateTime date, out HolidayInfo holiday)
+    {
+        holiday = null;
+
+        var cal = new ChineseLunisolarCalendar();
+        var year = cal.GetYear(date);
+        var leapMonth = cal.GetLeapMonth(year);
+
+        var lastMonth = leapMonth > 0 ? 13 : 12;
+        var month = cal.GetMonth(date);
+        if (month != lastMonth && month != 1) return false;
+
+        // 有些年十二月最后一天是二十九，没有三十
+        var day = cal.GetDayOfMonth(date);
+        var isLastDay = cal.GetDayOfMonth(date.AddDays(1)) == 1;
+
+        if (month == lastMonth && isLastDay && month != leapMonth ||
+            month == 1 && day <= 6 && month != leapMonth)
+        {
+            holiday = new HolidayInfo
+            {
+                Name = "春节",
+                Date = date.Date,
+                Days = 7,
+                Status = HolidayStatus.On
+            };
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>尝试获取端午节假期</summary>
+    /// <param name="date"></param>
+    /// <param name="holiday"></param>
+    /// <returns></returns>
+    public Boolean TryGetDuanwu(DateTime date, out HolidayInfo holiday)
+    {
+        holiday = null;
+
+        var cal = new ChineseLunisolarCalendar();
+        var year = cal.GetYear(date);
+        var month = cal.GetMonth(date);
+        var day = cal.GetDayOfMonth(date);
+        var leapMonth = cal.GetLeapMonth(year);
+
+        // 考虑有闰月
+        var targetMonth = leapMonth > 0 && leapMonth < month ? 6 : 5;
+
+        if (month == targetMonth && day == 5 && month != leapMonth)
+        {
+            holiday = new HolidayInfo
+            {
+                Name = "端午节",
+                Date = date.Date,
+                Days = 1,
+                Status = HolidayStatus.On
+            };
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>尝试获取端午节假期</summary>
+    /// <param name="date"></param>
+    /// <param name="holiday"></param>
+    /// <returns></returns>
+    public Boolean TryGetZhongqiu(DateTime date, out HolidayInfo holiday)
+    {
+        holiday = null;
+
+        var cal = new ChineseLunisolarCalendar();
+        var year = cal.GetYear(date);
+        var month = cal.GetMonth(date);
+        var day = cal.GetDayOfMonth(date);
+        var leapMonth = cal.GetLeapMonth(year);
+
+        // 考虑有闰月
+        var targetMonth = leapMonth > 0 && leapMonth < month ? 9 : 8;
+
+        if (month == targetMonth && day == 15 && month != leapMonth)
+        {
+            holiday = new HolidayInfo
+            {
+                Name = "中秋节",
+                Date = date.Date,
+                Days = 1,
+                Status = HolidayStatus.On
+            };
+
+            return true;
+        }
+
+        return false;
     }
     #endregion
 }
