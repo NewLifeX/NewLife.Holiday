@@ -9,7 +9,7 @@ public static class HolidayExtensions
     /// <summary>广西假期</summary>
     public static IHoliday Guangxi { get; set; } = new GuangxiHoliday();
 
-    /// <summary>是否中国假期</summary>
+    /// <summary>是否中国假期（放假无需上班）</summary>
     /// <param name="date"></param>
     /// <returns></returns>
     public static Boolean IsChinaHoliday(this DateTime date)
@@ -33,7 +33,7 @@ public static class HolidayExtensions
         return date.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday;
     }
 
-    /// <summary>是否广西假期</summary>
+    /// <summary>是否广西假期（放假无需上班）</summary>
     /// <param name="date"></param>
     /// <returns></returns>
     public static Boolean IsGuangxiHoliday(this DateTime date)

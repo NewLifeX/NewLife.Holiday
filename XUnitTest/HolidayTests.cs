@@ -212,4 +212,22 @@ public class HolidayTests
         Assert.Equal("中秋节", hi.Name);
         Assert.True(inf.Days >= 1);
     }
+
+    [Theory]
+    [InlineData("2023/9/23")]
+    [InlineData("2023/9/24")]
+    public void Test周末(String date)
+    {
+        var dt = date.ToDateTime();
+        var rs = dt.IsChinaHoliday();
+
+        Assert.True(rs);
+
+        var infs = HolidayExtensions.China.Query(dt).ToList();
+        Assert.Empty(infs);
+        //foreach (var item in infs)
+        //{
+        //    Assert.Equal(HolidayStatus.Normal, item.Status);
+        //}
+    }
 }

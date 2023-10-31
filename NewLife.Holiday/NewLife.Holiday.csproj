@@ -48,11 +48,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="NewLife.Core" Version="10.2.2023.401" />
+    <PackageReference Include="NewLife.Core" Version="10.6.2023.1001" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="China\**\*" />
     <EmbeddedResource Include="Guangxi\**\*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="China\2024.csv" />
+    <None Remove="Guangxi\2024.csv" />
   </ItemGroup>
 </Project>

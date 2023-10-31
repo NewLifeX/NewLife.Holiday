@@ -9,8 +9,9 @@ public class GuangxiHolidayTests
 {
     [Theory]
     [InlineData("2022/4/3")]
-    [InlineData("2023/4/14")]
-    [InlineData("2022/4/2")]
+    [InlineData("2023/4/22")]
+    [InlineData("2023/4/23")]
+    [InlineData("2022/4/5")]
     public void Test广西三月三(String date)
     {
         var dt = date.ToDateTime();
