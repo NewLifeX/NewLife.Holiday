@@ -12,6 +12,8 @@ public class GuangxiHolidayTests
     [InlineData("2023/4/22")]
     [InlineData("2023/4/23")]
     [InlineData("2022/4/5")]
+    [InlineData("2024/4/11")]
+    [InlineData("2024/4/12")]
     public void Test广西三月三(String date)
     {
         var dt = date.ToDateTime();
