@@ -58,6 +58,7 @@
 
   <ItemGroup>
     <None Remove="China\2024.csv" />
+    <None Remove="China\2025.csv" />
     <None Remove="Guangxi\2024.csv" />
   </ItemGroup>
 </Project>
