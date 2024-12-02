@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net461;netstandard2.0;netstandard2.1</TargetFrameworks>
+    <TargetFrameworks>net45;net461;netstandard2.0;netstandard2.1</TargetFrameworks>
     <AssemblyTitle>中国假期识别库</AssemblyTitle>
     <Description>中国假期识别库，内置假期调休数据库，每年维护更新。</Description>
     <Company>新生命开发团队</Company>
@@ -48,7 +48,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="NewLife.Core" Version="11.0.2024.1115" />
+    <PackageReference Include="NewLife.Core" Version="11.0.2024.1201" />
   </ItemGroup>
 
   <ItemGroup>
