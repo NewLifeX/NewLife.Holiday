@@ -5,7 +5,7 @@
     <AssemblyTitle>中国假期识别库</AssemblyTitle>
     <Description>中国假期识别库，内置假期调休数据库，每年维护更新。</Description>
     <Company>新生命开发团队</Company>
-    <Copyright>版权所有(C) 新生命开发团队 2002~2023</Copyright>
+    <Copyright>版权所有(C) 新生命开发团队 2002~2025</Copyright>
     <VersionPrefix>1.1</VersionPrefix>
     <VersionSuffix>$([System.DateTime]::Now.ToString(`yyyy.MMdd`))</VersionSuffix>
     <Version>$(VersionPrefix).$(VersionSuffix)</Version>
@@ -48,7 +48,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="NewLife.Core" Version="11.1.2024.1206" />
+    <PackageReference Include="NewLife.Core" Version="11.3.2025.101" />
   </ItemGroup>
 
   <ItemGroup>
