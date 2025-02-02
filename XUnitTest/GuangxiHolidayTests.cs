@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using NewLife;
 using NewLife.Holiday;
 using Xunit;
 
