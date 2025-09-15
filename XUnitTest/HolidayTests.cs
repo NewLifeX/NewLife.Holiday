@@ -61,6 +61,7 @@ public class HolidayTests
         Assert.True(rs);
         Assert.NotNull(hi);
         Assert.Equal("元旦", hi.Name);
+        Assert.Equal(1, hi.Days);
     }
 
     [Theory]
@@ -85,6 +86,7 @@ public class HolidayTests
         Assert.True(rs);
         Assert.NotNull(hi);
         Assert.Equal("清明节", hi.Name);
+        Assert.Equal(1, hi.Days);
     }
 
     [Theory]
@@ -101,7 +103,7 @@ public class HolidayTests
         var inf = HolidayExtensions.China.Query(dt).FirstOrDefault();
         Assert.NotNull(inf);
         Assert.Equal("劳动节", inf.Name);
-        Assert.True(inf.Days >= 3);
+        Assert.True(inf.Days >= 2); // 调休可能更长，但法定为 2 天（5/1-5/2）
 
         var hd = HolidayExtensions.China as ChinaHoliday;
         Assert.NotNull(hd);
@@ -110,7 +112,7 @@ public class HolidayTests
         Assert.True(rs);
         Assert.NotNull(hi);
         Assert.Equal("劳动节", hi.Name);
-        Assert.True(inf.Days >= 3);
+        Assert.Equal(dt.Year > 2025 ? 2 : 1, hi.Days);
     }
 
     [Theory]
@@ -127,7 +129,7 @@ public class HolidayTests
         var inf = HolidayExtensions.China.Query(dt).FirstOrDefault();
         Assert.NotNull(inf);
         Assert.Equal("国庆节", inf.Name);
-        Assert.True(inf.Days >= 3);
+        Assert.True(inf.Days >= 3); // 调休可能更长，但法定为 3 天（10/1-10/3）
 
         var hd = HolidayExtensions.China as ChinaHoliday;
         Assert.NotNull(hd);
@@ -136,7 +138,7 @@ public class HolidayTests
         Assert.True(rs);
         Assert.NotNull(hi);
         Assert.Equal("国庆节", hi.Name);
-        Assert.True(inf.Days >= 3);
+        Assert.Equal(3, hi.Days);
     }
 
     [Theory]
@@ -154,7 +156,7 @@ public class HolidayTests
         var inf = HolidayExtensions.China.Query(dt).FirstOrDefault();
         Assert.NotNull(inf);
         Assert.Equal("春节", inf.Name);
-        Assert.True(inf.Days >= 3);
+        Assert.True(inf.Days >= 4); // 调休可能更长，但法定为 4 天（除夕至初三）
 
         var hd = HolidayExtensions.China as ChinaHoliday;
         Assert.NotNull(hd);
@@ -163,7 +165,7 @@ public class HolidayTests
         Assert.True(rs);
         Assert.NotNull(hi);
         Assert.Equal("春节", hi.Name);
-        Assert.True(inf.Days >= 3);
+        Assert.Equal(4, hi.Days);
     }
 
     [Theory]
@@ -187,12 +189,12 @@ public class HolidayTests
         Assert.True(rs);
         Assert.NotNull(hi);
         Assert.Equal("端午节", hi.Name);
-        Assert.True(inf.Days >= 1);
+        Assert.Equal(1, hi.Days);
     }
 
     [Theory]
     [InlineData("2029/9/22")]
-    public void Test中秋节(String date)
+    public void Test中秋节2(String date)
     {
         var dt = date.ToDateTime();
         var rs = dt.IsChinaHoliday();
@@ -211,7 +213,7 @@ public class HolidayTests
         Assert.True(rs);
         Assert.NotNull(hi);
         Assert.Equal("中秋节", hi.Name);
-        Assert.True(inf.Days >= 1);
+        Assert.Equal(1, hi.Days);
     }
 
     [Theory]
