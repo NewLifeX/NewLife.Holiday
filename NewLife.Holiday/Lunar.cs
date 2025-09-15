@@ -138,10 +138,21 @@ public readonly struct Lunar
     {
         if (day <= 0 || day > 30) return day.ToString();
 
-        // 经典组合法："初十廿三" 和 "日一二三四五六七八九"
-        var tens = "初十廿三"[day / 10];
-        var ones = "日一二三四五六七八九"[day % 10];
-        return new String([tens, ones]);
+        // 标准表达：
+        // 1-9: 初一..初九
+        // 10: 初十
+        // 11-19: 十一..十九
+        // 20: 二十
+        // 21-29: 廿一..廿九
+        // 30: 三十
+        var ones = new[] { "", "一", "二", "三", "四", "五", "六", "七", "八", "九" };
+
+        if (day == 10) return "初十";
+        if (day < 10) return "初" + ones[day];
+        if (day < 20) return "十" + ones[day - 10];
+        if (day == 20) return "二十";
+        if (day == 30) return "三十";
+        return "廿" + ones[day - 20]; // 21..29
     }
     #endregion
 }

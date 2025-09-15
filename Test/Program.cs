@@ -43,15 +43,17 @@ internal class Program
 
     private static void Test2()
     {
-        var dt = new DateTime(2025, 1, 1);
+        var dt = new DateTime(1984, 1, 1);
+        XTrace.WriteLine("公历 农历 生肖");
+
         for (var i = 0; i < 365; i++)
         {
             var lunar = Lunar.FromDateTime(dt);
 
-            XTrace.WriteLine(lunar.ToString());
+            XTrace.WriteLine("{0} {1}年 {2}", dt, lunar.Zodiac, lunar.ToString());
 
             dt = dt.AddDays(1);
-            Thread.Sleep(100);
+            Thread.Sleep(10);
         }
     }
 }

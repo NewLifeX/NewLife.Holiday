@@ -83,7 +83,7 @@ public class LunarTests
         var d10 = d1.AddDays(9); // 初十
         var l10 = NewLife.Holiday.Lunar.FromDateTime(d10);
         Assert.Equal(10, l10.Day);
-        Assert.Equal("十日", l10.DayText); // 当前实现为“十日”
+        Assert.Equal("初十", l10.DayText);
 
         var d11 = d1.AddDays(10);
         var l11 = NewLife.Holiday.Lunar.FromDateTime(d11);
@@ -93,7 +93,7 @@ public class LunarTests
         var d20 = d1.AddDays(19);
         var l20 = NewLife.Holiday.Lunar.FromDateTime(d20);
         Assert.Equal(20, l20.Day);
-        Assert.Equal("廿日", l20.DayText);
+        Assert.Equal("二十", l20.DayText);
 
         var d21 = d1.AddDays(20);
         var l21 = NewLife.Holiday.Lunar.FromDateTime(d21);
