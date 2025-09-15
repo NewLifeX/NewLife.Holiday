@@ -43,14 +43,16 @@ internal class Program
 
     private static void Test2()
     {
-        var dt = new DateTime(1984, 1, 1);
+        //var dt = new DateTime(1984, 1, 1);
+        var dt = DateTime.Now.AddDays(-100);
         XTrace.WriteLine("公历 农历 生肖");
 
         for (var i = 0; i < 365; i++)
         {
             var lunar = Lunar.FromDateTime(dt);
+            var term = lunar.GetNearestSolarTerm();
 
-            XTrace.WriteLine("{0} {1}年 {2}", dt, lunar.Zodiac, lunar.ToString());
+            XTrace.WriteLine("{0} {1}年 {2} {3}", dt, lunar.Zodiac, lunar.ToString(), term);
 
             dt = dt.AddDays(1);
             Thread.Sleep(10);

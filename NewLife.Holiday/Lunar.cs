@@ -102,6 +102,38 @@ public readonly struct Lunar
     }
     #endregion
 
+    #region 节气
+    /// <summary>
+    /// 计算并返回距离该实例时间最近的24节气，以及与节气之间的带符号天数差。
+    /// 指定时间在目标之前用正数，在目标之后用负数。
+    /// </summary>
+    public SolarTermResult GetNearestSolarTerm()
+    {
+        var dt = Date;
+        // 取当前年与相邻年（防止最近节气跨年）
+        var candidates = new List<(SolarTerm Term, DateTime Date)>(72);
+        candidates.AddRange(SolarTerms.GetAll(dt.Year));
+        candidates.AddRange(SolarTerms.GetAll(dt.Year - 1));
+        candidates.AddRange(SolarTerms.GetAll(dt.Year + 1));
+
+        (SolarTerm Term, DateTime Date) best = default;
+        var bestAbs = Double.MaxValue;
+
+        foreach (var (term, tdate) in candidates)
+        {
+            var diff = (tdate.Date - dt).TotalDays; // 正：节气在未来；负：节气已过
+            var ad = Math.Abs(diff);
+            if (ad < bestAbs)
+            {
+                bestAbs = ad;
+                best = (term, tdate.Date);
+            }
+        }
+
+        return new SolarTermResult(best.Term, best.Date, dt);
+    }
+    #endregion
+
     #region 格式化
     /// <summary>
     /// 以“农历某某年某某月初几”的格式返回字符串。
