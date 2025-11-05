@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace NewLife.Holiday;
+﻿namespace NewLife.Holiday;
 
 /// <summary>
 /// 24节气枚举（按公历月份顺序：1月小寒起，至12月冬至止）
@@ -65,30 +62,30 @@ public enum SolarTerm
 /// 使用指定节气日期与参考时间构造结果。
 /// </remarks>
 /// <param name="term">节气。</param>
-/// <param name="termDate">节气的公历日期（按本地时区，时间部分忽略）。</param>
+/// <param name="termTime">节气的公历日期（按本地时区）。</param>
 /// <param name="from">参考时间。</param>
-public readonly struct SolarTermResult(SolarTerm term, DateTime termDate, DateTime from)
+public readonly struct SolarTermResult(SolarTerm term, DateTime termTime, DateTime from)
 {
     /// <summary>最近的节气。</summary>
     public SolarTerm Term { get; } = term;
 
-    /// <summary>节气对应的公历日期（本地时区零点）。</summary>
-    public DateTime TermDate { get; } = termDate.Date;
+    /// <summary>节气对应的公历日期（本地时区）。</summary>
+    public DateTime TermTime { get; } = termTime;
 
     /// <summary>
     /// 与节气日零点的带符号天数差。
     /// 指定时间在节气之前为正数，在节气之后为负数，可为小数。
     /// </summary>
-    public Double DaysTo { get; } = (termDate.Date - from).TotalDays;
+    public Double DaysTo { get; } = (termTime - from).TotalDays;
 
     /// <summary>指定时间当天是否就是该节气日。</summary>
-    public Boolean IsTermDay { get; } = from.Date == termDate.Date;
+    public Boolean IsTermDay { get; } = from.Date == termTime.Date;
 
     /// <summary>指定日期是否在节气日前后一天（含节气日）。</summary>
-    public Boolean IsWithinOneDay { get; } = Math.Abs((from.Date - termDate.Date).TotalDays) <= 1;
+    public Boolean IsWithinOneDay { get; } = Math.Abs((termTime - from).TotalDays) <= 1;
 
     /// <summary>格式化为“节气 yyyy-MM-dd ±X天”。</summary>
-    public override String ToString() => $"{Term} {TermDate:yyyy-MM-dd} {(DaysTo >= 0 ? "+" : "")}{DaysTo:0.#}天";
+    public override String ToString() => $"{Term} {TermTime:yyyy-MM-dd HH:mm:ss} {(DaysTo >= 0 ? "+" : "")}{DaysTo:0.#}天";
 }
 
 /// <summary>
@@ -128,6 +125,13 @@ public static class SolarTerms
         7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12
     };
 
+    // 目标太阳黄经（度），与枚举顺序一一对应。
+    private static readonly Double[] TargetLongitudes =
+    {
+        285, 300, 315, 330, 345, 0, 15, 30, 45, 60, 75, 90,
+        105, 120, 135, 150, 165, 180, 195, 210, 225, 240, 255, 270
+    };
+
     /// <summary>
     /// 计算指定年份的某个节气在公历中的日期（零点）。
     /// </summary>
@@ -136,18 +140,57 @@ public static class SolarTerms
     /// <returns>节气的公历日期（本地时区零点）。</returns>
     public static DateTime GetTermDate(Int32 year, SolarTerm term)
     {
+        // 兼容旧 API：基于精确时间取日期部分。
+        return GetTermTime(year, term).Date;
+    }
+
+    /// <summary>
+    /// 计算指定年份某个节气的本地时间（精确到分钟）。
+    /// </summary>
+    /// <param name="year">公历年。</param>
+    /// <param name="term">节气。</param>
+    /// <returns>节气发生的本地时间。</returns>
+    public static DateTime GetTermTime(Int32 year, SolarTerm term)
+    {
+        // 先用日级近似算法得到一个接近的日期，作为搜索起点，避免跨年索引不稳定。
         var idx = (Int32)term;
         var month = TermMonths[idx];
         var y = year % 100;
         var c = year >= 2001 ? C21[idx] : C20[idx];
-        // 基本修正项
         var l = (Int32)Math.Floor((y - 1) / 4.0);
         var day = (Int32)Math.Floor(y * D + c) - l;
-
-        // 个别年份的已知修正（少量特殊年，避免 ±1 天误差）。
         day += SpecialOffset(year, term);
 
-        return new DateTime(year, month, day);
+        // 本地日期的中午作为搜索中心更稳（避免夏令时边界影响）。
+        var localApprox = new DateTime(year, month, day, 12, 0, 0, DateTimeKind.Local);
+        // 以该时间前后各两天构造搜索区间，在 UTC 下做天文计算。
+        var utcStart = localApprox.AddDays(-2).ToUniversalTime();
+        var utcEnd = localApprox.AddDays(2).ToUniversalTime();
+
+        var target = TargetLongitudes[idx];
+
+        // 先粗扫找符号变化区间
+        var bracketFound = TryFindBracket(utcStart, utcEnd, target, out var a, out var b);
+        if (!bracketFound)
+        {
+            // 若未找到，放宽到前后 7 天且步长加粗，防止个别年份近似日与真实日相差较大
+            var wideStart = localApprox.AddDays(-7).ToUniversalTime();
+            var wideEnd = localApprox.AddDays(7).ToUniversalTime();
+            if (!TryFindBracket(wideStart, wideEnd, target, out a, out b))
+            {
+                // 极端情况：回退到近似日期的当天做二分近似（此时精度可能较低）
+                a = localApprox.ToUniversalTime().AddHours(-12);
+                b = localApprox.ToUniversalTime().AddHours(12);
+            }
+        }
+
+        // 在括区内进行二分逼近，直到达到分钟级精度
+        var resultUtc = BinarySearchLongitude(a, b, target, TimeSpan.FromMinutes(0.5));
+
+        // 转回本地时间
+        var local = resultUtc.ToLocalTime();
+        // 舍入到分钟
+        return new DateTime(local.Year, local.Month, local.Day, local.Hour, local.Minute, 0, DateTimeKind.Local);
     }
 
     /// <summary>
@@ -162,6 +205,20 @@ public static class SolarTerms
         {
             var t = (SolarTerm)i;
             list.Add((t, GetTermDate(year, t)));
+        }
+        return list;
+    }
+
+    /// <summary>
+    /// 返回某年的全部24节气本地时间（精确到分钟）。
+    /// </summary>
+    public static IReadOnlyList<(SolarTerm Term, DateTime Time)> GetAllTimes(Int32 year)
+    {
+        var list = new List<(SolarTerm, DateTime)>(24);
+        for (var i = 0; i < 24; i++)
+        {
+            var t = (SolarTerm)i;
+            list.Add((t, GetTermTime(year, t)));
         }
         return list;
     }
@@ -194,4 +251,124 @@ public static class SolarTerms
         }
         return 0;
     }
+
+    #region 天文计算（简化太阳黄经）
+    private static Boolean TryFindBracket(DateTime utcStart, DateTime utcEnd, Double targetLongitude, out DateTime a, out DateTime b)
+    {
+        // 按6 小时步长扫描，找到符号变化的相邻两个采样点
+        var step = TimeSpan.FromHours(6);
+        var t = utcStart;
+        var prevT = t;
+        var prevVal = SignedAngleDiff(SunApparentLongitude(t), targetLongitude);
+        t = t + step;
+        while (t <= utcEnd)
+        {
+            var val = SignedAngleDiff(SunApparentLongitude(t), targetLongitude);
+            if (prevVal <= 0 && val >= 0 || prevVal >= 0 && val <= 0)
+            {
+                a = prevT;
+                b = t;
+                return true;
+            }
+            prevT = t;
+            prevVal = val;
+            t = t + step;
+        }
+        a = default;
+        b = default;
+        return false;
+    }
+
+    private static DateTime BinarySearchLongitude(DateTime utcA, DateTime utcB, Double targetLongitude, TimeSpan tolerance)
+    {
+        var a = utcA;
+        var b = utcB;
+        while ((b - a) > tolerance)
+        {
+            var m = a + TimeSpan.FromTicks((b.Ticks - a.Ticks) / 2);
+            var val = SignedAngleDiff(SunApparentLongitude(m), targetLongitude);
+            var vala = SignedAngleDiff(SunApparentLongitude(a), targetLongitude);
+            if (vala <= 0 && val >= 0 || vala >= 0 && val <= 0) b = m; else a = m;
+        }
+        return a + TimeSpan.FromTicks((b.Ticks - a.Ticks) / 2);
+    }
+
+    //计算指定 UTC 时间的太阳视黄经（度，0..360）
+    private static Double SunApparentLongitude(DateTime utc)
+    {
+        // 转为儒略日（UTC）
+        var jd = ToJulianDay(utc);
+        var T = (jd - 2451545.0) / 36525.0; // 儒略世纪数（J2000.0 起）
+
+        // 平黄经 L0（度）
+        var L0 = 280.46646 + 36000.76983 * T + 0.0003032 * T * T;
+        L0 = Normalize360(L0);
+
+        // 地球轨道偏心率 e
+        var e = 0.016708634 - 0.000042037 * T - 0.0000001267 * T * T;
+
+        // 平近点角 M（度）
+        var M = 357.52911 + 35999.05029 * T - 0.0001537 * T * T;
+        M = Normalize360(M);
+
+        // 日心几何黄经的中心差 C（度）
+        var Mrad = Deg2Rad(M);
+        var C = (1.914602 - 0.004817 * T - 0.000014 * T * T) * Math.Sin(Mrad)
+               + (0.019993 - 0.000101 * T) * Math.Sin(2 * Mrad)
+               + 0.000289 * Math.Sin(3 * Mrad);
+
+        var trueLong = L0 + C; // 真黄经（度）
+
+        //视黄经修正（岁差）
+        var Omega = 125.04 - 1934.136 * T;
+        var lambda = trueLong - 0.00569 - 0.00478 * Math.Sin(Deg2Rad(Omega));
+
+        return Normalize360(lambda);
+    }
+
+    private static Double ToJulianDay(DateTime utc)
+    {
+        if (utc.Kind != DateTimeKind.Utc) utc = utc.ToUniversalTime();
+        // 算法：Meeus, Astronomical Algorithms（简化版）
+        var y = utc.Year;
+        var m = utc.Month;
+        var d = utc.Day + (utc.Hour + (utc.Minute + utc.Second / 60.0) / 60.0) / 24.0;
+
+        if (m <= 2)
+        {
+            y -= 1;
+            m += 12;
+        }
+
+        var A = Math.Floor(y / 100.0);
+        var B = 2 - A + Math.Floor(A / 4.0);
+
+        var jd = Math.Floor(365.25 * (y + 4716))
+                + Math.Floor(30.6001 * (m + 1))
+                + d + B - 1524.5;
+
+        return jd;
+    }
+
+    private static Double Deg2Rad(Double deg) => deg * (Math.PI / 180.0);
+
+    private static Double Normalize360(Double x)
+    {
+        var r = x % 360.0;
+        if (r < 0) r += 360.0;
+        return r;
+    }
+
+    private static Double Normalize180(Double x)
+    {
+        var r = Normalize360(x);
+        return r > 180.0 ? r - 360.0 : r;
+    }
+
+    private static Double SignedAngleDiff(Double lon, Double target)
+    {
+        //规范到 -180..180 的带符号差值
+        return Normalize180(lon - target);
+    }
+    #endregion
 }

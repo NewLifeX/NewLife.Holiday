@@ -111,26 +111,26 @@ public readonly struct Lunar
     {
         var dt = Date;
         // 取当前年与相邻年（防止最近节气跨年）
-        var candidates = new List<(SolarTerm Term, DateTime Date)>(72);
-        candidates.AddRange(SolarTerms.GetAll(dt.Year));
-        candidates.AddRange(SolarTerms.GetAll(dt.Year - 1));
-        candidates.AddRange(SolarTerms.GetAll(dt.Year + 1));
+        var candidates = new List<(SolarTerm Term, DateTime Time)>(72);
+        candidates.AddRange(SolarTerms.GetAllTimes(dt.Year));
+        candidates.AddRange(SolarTerms.GetAllTimes(dt.Year - 1));
+        candidates.AddRange(SolarTerms.GetAllTimes(dt.Year + 1));
 
-        (SolarTerm Term, DateTime Date) best = default;
+        (SolarTerm Term, DateTime Time) best = default;
         var bestAbs = Double.MaxValue;
 
-        foreach (var (term, tdate) in candidates)
+        foreach (var (term, time) in candidates)
         {
-            var diff = (tdate.Date - dt).TotalDays; // 正：节气在未来；负：节气已过
+            var diff = (time - dt).TotalDays; // 正：节气在未来；负：节气已过
             var ad = Math.Abs(diff);
             if (ad < bestAbs)
             {
                 bestAbs = ad;
-                best = (term, tdate.Date);
+                best = (term, time);
             }
         }
 
-        return new SolarTermResult(best.Term, best.Date, dt);
+        return new SolarTermResult(best.Term, best.Time, dt);
     }
     #endregion
 
