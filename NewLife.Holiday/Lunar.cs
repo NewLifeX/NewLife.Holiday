@@ -147,23 +147,8 @@ public readonly struct Lunar
 
     private static String MonthToText(Int32 month)
     {
-        // 索引从 1 开始，0 位置占位
-        return month switch
-        {
-            1 => "正",
-            2 => "二",
-            3 => "三",
-            4 => "四",
-            5 => "五",
-            6 => "六",
-            7 => "七",
-            8 => "八",
-            9 => "九",
-            10 => "十",
-            11 => "冬",
-            12 => "腊",
-            _ => month.ToString(),
-        };
+        // 基于字符串常量按索引定位
+        return (month >= 1 && month <= 12) ? " 正二三四五六七八九十冬腊"[month].ToString() : month.ToString();
     }
 
     private static String DayToText(Int32 day)
@@ -177,7 +162,9 @@ public readonly struct Lunar
         // 20: 二十
         // 21-29: 廿一..廿九
         // 30: 三十
-        var ones = new[] { "", "一", "二", "三", "四", "五", "六", "七", "八", "九" };
+
+        // 月份与日数字文本常量，索引从1 开始，0 位占位（空格）
+        const String ones = " 一二三四五六七八九";
 
         if (day == 10) return "初十";
         if (day < 10) return "初" + ones[day];
