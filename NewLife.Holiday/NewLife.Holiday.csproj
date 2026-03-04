@@ -1,9 +1,9 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks>net45;net461;netstandard2.0;netstandard2.1</TargetFrameworks>
-    <AssemblyTitle>中国假期识别库</AssemblyTitle>
-    <Description>中国假期识别库，内置假期调休数据库，每年维护更新。</Description>
+    <AssemblyTitle>中国节假日识别库</AssemblyTitle>
+    <Description>中国节假日与调休识别库，内置年度数据并支持农历节日判定。</Description>
     <Company>新生命开发团队</Company>
     <Copyright>版权所有(C) 新生命开发团队 2002~2026</Copyright>
     <VersionPrefix>1.4</VersionPrefix>

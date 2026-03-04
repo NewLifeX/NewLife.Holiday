@@ -1,8 +1,9 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
-
+    <AssemblyTitle>假期识别单元测试</AssemblyTitle>
+    <Description>NewLife.Holiday 的xUnit测试项目，覆盖节假日、农历与节气核心行为。</Description>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
