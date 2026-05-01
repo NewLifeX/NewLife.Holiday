@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk" ToolsVersion="Current">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <AssemblyTitle>假期识别示例程序</AssemblyTitle>
     <Description>用于演示中国与广西假期识别、节气计算等功能的控制台程序。</Description>
     <Company>新生命开发团队</Company>
@@ -18,7 +18,7 @@
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="NewLife.Core" Version="11.13.2026.301" />
+    <PackageReference Include="NewLife.Core" Version="11.15.2026.501" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NewLife.Holiday\NewLife.Holiday.csproj" />
