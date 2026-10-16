@@ -122,6 +122,10 @@ jobs:
             <add key="nuget.org" value="https://api.nuget.org/v3/index.json" />
             <add key="lnuget" value="https://lnuget.loongnix.cn/v3/index.json" allowInsecureConnections="true" />
           </packageSources>
+          <config>
+            <!-- lnuget 大包下载偶发响应截断，降低单源并发以提升稳定性 -->
+            <add key="maxHttpRequestsPerSource" value="2" />
+          </config>
         </configuration>
         EOF
         dotnet restore AotSmoke/AotSmoke.csproj -r linux-loongarch64 --configfile "$HOME/lnuget.config"
@@ -140,7 +144,10 @@ jobs:
         dotnet restore /tmp/ilcpck/ilcpck.csproj --configfile "$HOME/lnuget.config"
     - name: NativeAOT Publish (linux-loongarch64, 探索)
       # 容器内以 --no-restore 发布，完全绕开 QEMU 下的 NuGet 还原链路；
-      # 基准镜像未含 libicu，dotnet CLI 启动即 FailFast，需补装；ilc 为 LA64 原生工具，QEMU 下编译耗时较长，加超时兜底。
+      # 基准镜像未含 libicu，dotnet CLI 启动即 FailFast，需补装；
+      # DOTNET_EnableHWIntrinsic=0：QEMU 用户态对 LASX/LSX 指令覆盖不全，关闭硬件内建避免非法指令崩溃；
+      # DOTNET_CLI_USE_MSBUILD_SERVER=0 + -m:1/-nodeReuse:false：收敛为进程内单节点构建，避免服务端/工作节点进程在仿真下崩溃；
+      # ilc 为 LA64 原生工具，QEMU 下编译耗时较长，加超时兜底。
       continue-on-error: true
       run: |
         docker run --rm --platform linux/loong64 \
@@ -150,12 +157,15 @@ jobs:
           -e NUGET_PACKAGES=/home/runner/.nuget/packages \
           -e DOTNET_ROOT=/opt/dotnet \
           -e DOTNET_CLI_TELEMETRY_OPTOUT=1 \
+          -e DOTNET_EnableHWIntrinsic=0 \
+          -e DOTNET_CLI_USE_MSBUILD_SERVER=0 \
+          -e MSBUILDDISABLENODEREUSE=1 \
           lcr.loongnix.cn/debian:14-slim \
           sh -c '
             set -e
             apt-get update -qq
             apt-get install -y -qq --no-install-recommends clang zlib1g-dev libicu-dev >/dev/null
-            timeout 150m /opt/dotnet/dotnet publish /src/AotSmoke/AotSmoke.csproj -c Release -r linux-loongarch64 --no-restore -o /src/AotSmoke/bin/aot-out-la64
+            timeout 150m /opt/dotnet/dotnet publish /src/AotSmoke/AotSmoke.csproj -c Release -r linux-loongarch64 --no-restore --disable-build-servers -m:1 -nodeReuse:false -o /src/AotSmoke/bin/aot-out-la64
           '
     - name: Run NativeAOT Smoke (linux-loongarch64, 探索)
       continue-on-error: true
