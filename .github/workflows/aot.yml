@@ -58,14 +58,15 @@ jobs:
 
   # LoongArch64（linux-loongarch64，必选覆盖）：官方无 runner、运行时无原生 runner 分发；
   # 方案：docker + QEMU 用户态仿真（loong64 binfmt）+ 龙芯 SDK 在 loong64 容器内以 LA64 运行时运行冒烟程序
-  #（JIT 模式，主信号，阻断门禁）；NativeAOT 原生编译为探索步骤（continue-on-error）：
-  # 宿主 x64 ILCompiler 无 LA64 后端；容器内以龙芯 SDK 尝试 publish -r linux-loongarch64（已配置 lnuget 源），
-  # 官方支持到位后即可将探索步骤转为阻断。
+  #（JIT 模式，主信号，阻断门禁）。
+  # NativeAOT 原生编译（探索步骤，continue-on-error）：跨 OS 原生编译不被官方支持，LA64 原生编译只能在容器内进行；
+  # 而龙芯 SDK 在 QEMU 下的 NuGet 还原链路不稳（RemoveDuplicates NRE，MSB4018），
+  # 故改为“宿主 x64 SDK 预还原（含 lnuget 源）+ 容器内 publish --no-restore”，链路稳定后可转为阻断门禁。
   # QEMU 用户态对 LASX/LSX 指令覆盖不全，关闭硬件内建（DOTNET_EnableHWIntrinsic=0）避免非法指令崩溃。
   loongarch64:
     name: aot (linux-la64 qemu)
     runs-on: ubuntu-latest
-    timeout-minutes: 150
+    timeout-minutes: 180
 
     steps:
     - uses: actions/checkout@v4
@@ -108,10 +109,38 @@ jobs:
             /opt/dotnet/dotnet --info
             /opt/dotnet/dotnet /src/AotSmoke/bin/Release/net10.0/AotSmoke.dll
           '
+    - name: Restore for linux-loongarch64 & ILCompiler pack (host x64 SDK)
+      # 容器内不能跑 NuGet 还原（QEMU 下 RemoveDuplicates NRE），全部预还原到 $HOME/.nuget/packages 后挂载进容器：
+      # 1) 目标 RID 运行时包：lnuget 提供 linux-loongarch64 运行时包（其服务索引含 HTTP 终结点，需 allowInsecureConnections）；
+      # 2) NativeAOT 宿主包 runtime.linux-loongarch64.Microsoft.DotNet.ILCompiler（龙芯随 SDK 版本 10.0.13 提供，含 LA64 原生 ilc）。
+      run: |
+        cat > "$HOME/lnuget.config" <<'EOF'
+        <?xml version="1.0" encoding="utf-8"?>
+        <configuration>
+          <packageSources>
+            <clear />
+            <add key="nuget.org" value="https://api.nuget.org/v3/index.json" />
+            <add key="lnuget" value="https://lnuget.loongnix.cn/v3/index.json" allowInsecureConnections="true" />
+          </packageSources>
+        </configuration>
+        EOF
+        dotnet restore AotSmoke/AotSmoke.csproj -r linux-loongarch64 --configfile "$HOME/lnuget.config"
+
+        mkdir -p /tmp/ilcpck
+        cat > /tmp/ilcpck/ilcpck.csproj <<'EOF'
+        <Project Sdk="Microsoft.NET.Sdk">
+          <PropertyGroup>
+            <TargetFramework>net10.0</TargetFramework>
+          </PropertyGroup>
+          <ItemGroup>
+            <PackageDownload Include="runtime.linux-loongarch64.Microsoft.DotNet.ILCompiler" Version="[10.0.13]" />
+          </ItemGroup>
+        </Project>
+        EOF
+        dotnet restore /tmp/ilcpck/ilcpck.csproj --configfile "$HOME/lnuget.config"
     - name: NativeAOT Publish (linux-loongarch64, 探索)
-      # 已知失败点：QEMU 下龙芯 SDK 的 NuGet 还原链路不稳定（RemoveDuplicates 任务 NRE，MSB4018，
-      # 与 NewLife.Core 记录一致）；跨 OS 原生编译不被官方支持，LA64 原生编译只能在本容器内进行。
-      # 基准镜像未含 libicu，dotnet CLI 启动即 FailFast，与首个容器一致补装，确保失败信号来自 SDK/ILCompiler 支持面。
+      # 容器内以 --no-restore 发布，完全绕开 QEMU 下的 NuGet 还原链路；
+      # 基准镜像未含 libicu，dotnet CLI 启动即 FailFast，需补装；ilc 为 LA64 原生工具，QEMU 下编译耗时较长，加超时兜底。
       continue-on-error: true
       run: |
         docker run --rm --platform linux/loong64 \
@@ -126,8 +155,7 @@ jobs:
             set -e
             apt-get update -qq
             apt-get install -y -qq --no-install-recommends clang zlib1g-dev libicu-dev >/dev/null
-            /opt/dotnet/dotnet nuget add source -n lnuget https://lnuget.loongnix.cn/v3/index.json || true
-            /opt/dotnet/dotnet publish /src/AotSmoke/AotSmoke.csproj -c Release -r linux-loongarch64 -o /src/AotSmoke/bin/aot-out-la64
+            timeout 150m /opt/dotnet/dotnet publish /src/AotSmoke/AotSmoke.csproj -c Release -r linux-loongarch64 --no-restore -o /src/AotSmoke/bin/aot-out-la64
           '
     - name: Run NativeAOT Smoke (linux-loongarch64, 探索)
       continue-on-error: true
@@ -145,5 +173,5 @@ jobs:
               ./AotSmoke/bin/aot-out-la64/AotSmoke
             '
         else
-          echo "未产出 linux-loongarch64 原生可执行文件（NativeAOT 尚未支持 LA64），跳过运行"
+          echo "未产出 linux-loongarch64 原生可执行文件，跳过运行（发布为探索步骤）"
         fi
