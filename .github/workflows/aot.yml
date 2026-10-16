@@ -59,9 +59,11 @@ jobs:
   # LoongArch64（linux-loongarch64，必选覆盖）：官方无 runner、运行时无原生 runner 分发；
   # 方案：docker + QEMU 用户态仿真（loong64 binfmt）+ 龙芯 SDK 在 loong64 容器内以 LA64 运行时运行冒烟程序
   #（JIT 模式，主信号，阻断门禁）。
-  # NativeAOT 原生编译（探索步骤，continue-on-error）：跨 OS 原生编译不被官方支持，LA64 原生编译只能在容器内进行；
-  # 而龙芯 SDK 在 QEMU 下的 NuGet 还原链路不稳（RemoveDuplicates NRE，MSB4018），
-  # 故改为“宿主 x64 SDK 预还原（含 lnuget 源）+ 容器内 publish --no-restore”，链路稳定后可转为阻断门禁。
+  # NativeAOT 原生编译（探索步骤，continue-on-error）：跨 OS 原生编译不被官方支持，LA64 原生编译只能在容器内进行。
+  # 龙芯已随 SDK 发布完整 LA64 NativeAOT 工具链（lnuget 提供 runtime.linux-loongarch64.Microsoft.DotNet.ILCompiler 与
+  # NativeAOT 运行时包），管线已推进到“容器内仅执行 ilc 与链接”，但 QEMU 下龙芯运行时的反射 InvokeStub 存在缺陷：
+  # MSBuild 任务属性赋值会随代码路径随机触发 NRE/内存破坏（RemoveDuplicates/CombineTargetFrameworkInfoProperties/
+  # csc 动态正则等），不同轮次命中最先执行的任务，仓库侧无法修复；官方 SDK 修复该缺陷后可将探索步骤转为阻断门禁。
   # QEMU 用户态对 LASX/LSX 指令覆盖不全，关闭硬件内建（DOTNET_EnableHWIntrinsic=0）避免非法指令崩溃。
   loongarch64:
     name: aot (linux-la64 qemu)
@@ -151,13 +153,14 @@ jobs:
       # 宿主产出 RID 相关纯 IL 与 apphost，容器内 publish --no-build 只跑 ilc 原生编译与链接
       run: dotnet build AotSmoke/AotSmoke.csproj -c Release -r linux-loongarch64 --no-restore
     - name: NativeAOT Publish (linux-loongarch64, 探索)
-      # 容器内以 --no-build --no-restore 发布：托管编译已在宿主完成，容器只跑 ilc（LA64 原生工具）与 clang 链接，
-      # 完全绕开 QEMU 下的 NuGet 还原与 Roslyn 编译链路；
+      # 管线：宿主完成还原与托管编译，容器内只跑 ilc（LA64 原生工具）与 clang 链接，绕开 QEMU 下的 NuGet 还原与 Roslyn 编译；
+      # 当前剩余阻塞（2026-10-16 实测）：QEMU 下龙芯运行时的反射 InvokeStub 缺陷令 MSBuild 任务属性赋值随机 NRE/内存破坏
+      #（RemoveDuplicates/CombineTargetFrameworkInfoProperties/csc 动态正则……随代码路径变化），需官方 SDK 修复。
       # BuildProjectReferences=false + _GetChildProjectCopyToPublishDirectoryItems=false：跳过对类库 P2P 的发布项收集
-      # （类库无 content 项，跳过安全；--no-build 不会自动关闭该调用，会踩 MSB4057 GetCopyToPublishDirectoryItems）；
+      #（类库无 content 项，跳过安全；--no-build 不会自动关闭该调用，会踩 MSB4057）；
       # 基准镜像未含 libicu，dotnet CLI 启动即 FailFast，需补装；
       # DOTNET_EnableHWIntrinsic=0：QEMU 用户态对 LASX/LSX 指令覆盖不全，关闭硬件内建避免非法指令崩溃；
-      # DOTNET_ReadyToRun=0 + DOTNET_TieredCompilation=0：强制全 JIT，绕开 R2R 预编译代码在 QEMU 下的内存破坏；
+      # DOTNET_ReadyToRun=0 + DOTNET_TieredCompilation=0：强制全 JIT，减少 R2R 预编译代码在 QEMU 下的风险面；
       # DOTNET_CLI_USE_MSBUILD_SERVER=0 + -m:1/-nodeReuse:false：收敛为进程内单节点构建，避免服务端/工作节点进程在仿真下崩溃；
       # ilc 为 LA64 原生工具，QEMU 下编译耗时较长，加超时兜底。
       continue-on-error: true
