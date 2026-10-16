@@ -109,8 +109,9 @@ jobs:
             /opt/dotnet/dotnet /src/AotSmoke/bin/Release/net10.0/AotSmoke.dll
           '
     - name: NativeAOT Publish (linux-loongarch64, 探索)
-      # 基准镜像未含 libicu，dotnet CLI 启动即 FailFast（Couldn't find a valid ICU package）；
-      # 与首个容器一致补装，确保失败信号来自 ILCompiler 支持面而非环境缺失
+      # 已知失败点：QEMU 下龙芯 SDK 的 NuGet 还原链路不稳定（RemoveDuplicates 任务 NRE，MSB4018，
+      # 与 NewLife.Core 记录一致）；跨 OS 原生编译不被官方支持，LA64 原生编译只能在本容器内进行。
+      # 基准镜像未含 libicu，dotnet CLI 启动即 FailFast，与首个容器一致补装，确保失败信号来自 SDK/ILCompiler 支持面。
       continue-on-error: true
       run: |
         docker run --rm --platform linux/loong64 \
