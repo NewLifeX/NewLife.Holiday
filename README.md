@@ -28,6 +28,12 @@ var dt = "2022-04-02".ToDateTime();
 var rs = dt.IsGuangxiHoliday();
 ```
 
+## 项目文档
+
+- [需求文档](Doc/需求文档.md)
+- [功能清单](Doc/功能清单.md)
+- [架构设计](Doc/架构设计.md)
+
 ## 新生命项目矩阵
 各项目默认支持net9.0/netstandard2.1/netstandard2.0/net4.62/net4.5，旧版（2024.0801）支持net4.0/net2.0  
 
