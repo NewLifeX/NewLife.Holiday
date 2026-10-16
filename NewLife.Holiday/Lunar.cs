@@ -12,8 +12,8 @@ namespace NewLife.Holiday;
 /// - <see cref="Day"/>：农历日（1-30）。
 /// - <see cref="IsLeapMonth"/>：是否闰月。
 /// 
-/// 说明：<see cref="ChineseLunisolarCalendar.GetMonth(DateTime)"/> 返回的月份在遇到闰月的年份会包含“闰月插位”，
-/// 例如闰四月时，四月=4，闰四月=5，五月=6 …… 因此本类型内部会根据 <see cref="ChineseLunisolarCalendar.GetLeapMonth(Int32)"/>
+/// 说明：<see cref="ChineseLunisolarCalendar"/> 的 GetMonth(DateTime) 返回的月份在遇到闰月的年份会包含“闰月插位”，
+/// 例如闰四月时，四月=4，闰四月=5，五月=6 …… 因此本类型内部会根据 <see cref="ChineseLunisolarCalendar"/> 的 GetLeapMonth(Int32)
 /// 将月份规格化为 1-12，并单独提供 <see cref="IsLeapMonth"/> 标识。
 /// </remarks>
 public readonly struct Lunar
@@ -72,6 +72,8 @@ public readonly struct Lunar
     /// 依赖 <see cref="ChineseLunisolarCalendar"/>，有效范围大致为 1901-02-19 至 2101-01-28。
     /// 超出范围会抛出 <see cref="ArgumentOutOfRangeException"/>。
     /// </remarks>
+    /// <param name="dateTime">指定公历日期时间。</param>
+    /// <returns>对应的农历对象。</returns>
     public static Lunar FromDateTime(DateTime dateTime)
     {
         // 取农历年、月（包含闰月插位）、日
@@ -107,6 +109,7 @@ public readonly struct Lunar
     /// 计算并返回距离该实例时间最近的24节气，以及与节气之间的带符号天数差。
     /// 指定时间在目标之前用正数，在目标之后用负数。
     /// </summary>
+    /// <returns>最近节气结果。</returns>
     public SolarTermResult GetNearestSolarTerm()
     {
         var dt = Date;

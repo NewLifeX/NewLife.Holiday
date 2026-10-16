@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using Xunit;
 
@@ -173,5 +174,13 @@ public class LunarTests
             var lunar = NewLife.Holiday.Lunar.FromDateTime(dt);
             Assert.Equal(map[lunar.Month], lunar.MonthText);
         }
+    }
+
+    [Fact]
+    [DisplayName("超出农历支持范围抛出参数越界异常")]
+    public void FromDateTime_OutOfRange_Throws()
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() => NewLife.Holiday.Lunar.FromDateTime(new DateTime(1800, 1, 1)));
+        Assert.Throws<ArgumentOutOfRangeException>(() => NewLife.Holiday.Lunar.FromDateTime(new DateTime(2200, 1, 1)));
     }
 }
