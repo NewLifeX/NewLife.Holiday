@@ -109,10 +109,11 @@ jobs:
             /opt/dotnet/dotnet --info
             /opt/dotnet/dotnet /src/AotSmoke/bin/Release/net10.0/AotSmoke.dll
           '
-    - name: Restore for linux-loongarch64 & ILCompiler pack (host x64 SDK)
+    - name: Restore for linux-loongarch64 & 容器构建所需包 (host x64 SDK)
       # 容器内不能跑 NuGet 还原（QEMU 下 RemoveDuplicates NRE），全部预还原到 $HOME/.nuget/packages 后挂载进容器：
       # 1) 目标 RID 运行时包：lnuget 提供 linux-loongarch64 运行时包（其服务索引含 HTTP 终结点，需 allowInsecureConnections）；
-      # 2) NativeAOT 宿主包 runtime.linux-loongarch64.Microsoft.DotNet.ILCompiler（龙芯随 SDK 版本 10.0.13 提供，含 LA64 原生 ilc）。
+      # 2) NativeAOT 宿主包 runtime.linux-loongarch64.Microsoft.DotNet.ILCompiler（龙芯随 SDK 版本 10.0.13 提供，含 LA64 原生 ilc）；
+      # 3) 容器 SDK 未自带的目标包（NETSDK1127）：NETStandard.Library.Ref（netstandard2.1）等，宿主 SDK 自带故还原不会自动下载。
       run: |
         cat > "$HOME/lnuget.config" <<'EOF'
         <?xml version="1.0" encoding="utf-8"?>
@@ -138,6 +139,9 @@ jobs:
           </PropertyGroup>
           <ItemGroup>
             <PackageDownload Include="runtime.linux-loongarch64.Microsoft.DotNet.ILCompiler" Version="[10.0.13]" />
+            <PackageDownload Include="NETStandard.Library.Ref" Version="[2.1.0]" />
+            <PackageDownload Include="NETStandard.Library" Version="[2.0.3]" />
+            <PackageDownload Include="Microsoft.NETCore.App.Ref" Version="[10.0.13]" />
           </ItemGroup>
         </Project>
         EOF
