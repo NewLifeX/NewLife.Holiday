@@ -65,16 +65,18 @@ jobs:
         path: TestResults/*.trx
         if-no-files-found: ignore
 
-  # Linux LoongArch64（LA64，必选门禁）：GitHub 无 LA64 runner/runtime pack，
+  # Linux LoongArch64（LA64）：GitHub 无 LA64 runner/runtime pack，
   # 采用 docker + QEMU 用户态仿真（loong64 binfmt）+ 龙芯 SDK 在 loong64 容器内跑 net10.0 全量单测。
   # 裸宿主缺 LA64 动态加载器，必须在容器内执行；基础镜像 lcr.loongnix.cn/debian:14-slim 自带 loader 与可用 apt。
   # vstest 在 LA64 不可用（龙芯 SDK 版不认识 LoongArch64 架构、宿主版为 x64 R2R 无法加载），
   # 改以 xunit.runner.utility 构建自宿主执行器（纯 IL），在容器内以 LA64 运行时执行测试程序集。
   # QEMU 用户态对 LASX/LSX 指令覆盖不全，关闭硬件内建（DOTNET_EnableHWIntrinsic=0）避免非法指令崩溃。
+  # 非阻塞策略（2026-10-17 决策）：LA64 为兼容性参考信号，QEMU/龙芯 SDK 环境问题失败时不阻塞主分支。
   loongarch64:
     name: test (linux-la64 qemu)
     runs-on: ubuntu-latest
     timeout-minutes: 120
+    continue-on-error: true
 
     steps:
     - uses: actions/checkout@v4

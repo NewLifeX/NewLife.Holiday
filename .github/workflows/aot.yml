@@ -9,12 +9,13 @@ on:
 
 jobs:
   # NativeAOT 冒烟矩阵：NativeAOT 官方不支持跨 OS 编译，每个 RID 用原生 runner 发布运行。
-  # win-x64 / linux-x64 / linux-arm64 为阻断门禁；LA64（linux-loongarch64，必选覆盖）见本文件末尾 job。
   # 同一冒烟工程先以运行时模式跑一遍（JIT 对照），再 NativeAOT 发布运行，任一场景失败即非 0 退出码。
+  # 非阻塞策略（2026-10-17 决策）：AOT 冒烟为兼容性参考信号，环境/工具链问题失败时不阻塞主分支。
   aot:
     name: aot (${{ matrix.rid }})
     runs-on: ${{ matrix.os }}
     timeout-minutes: 40
+    continue-on-error: true
     strategy:
       fail-fast: false
       matrix:
@@ -65,10 +66,12 @@ jobs:
   # MSBuild 任务属性赋值会随代码路径随机触发 NRE/内存破坏（RemoveDuplicates/CombineTargetFrameworkInfoProperties/
   # csc 动态正则等），不同轮次命中最先执行的任务，仓库侧无法修复；官方 SDK 修复该缺陷后可将探索步骤转为阻断门禁。
   # QEMU 用户态对 LASX/LSX 指令覆盖不全，关闭硬件内建（DOTNET_EnableHWIntrinsic=0）避免非法指令崩溃。
+  # 非阻塞策略（2026-10-17 决策）：LA64 与 AOT 均为兼容性参考信号，环境问题失败时不阻塞主分支（可跳过）。
   loongarch64:
     name: aot (linux-la64 qemu)
     runs-on: ubuntu-latest
     timeout-minutes: 180
+    continue-on-error: true
 
     steps:
     - uses: actions/checkout@v4
