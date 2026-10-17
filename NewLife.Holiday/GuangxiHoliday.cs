@@ -1,6 +1,4 @@
-﻿using System.Globalization;
-
-namespace NewLife.Holiday;
+﻿namespace NewLife.Holiday;
 
 /// <summary>广西假期。特有三月三</summary>
 public class GuangxiHoliday : ChinaHoliday
@@ -44,13 +42,10 @@ public class GuangxiHoliday : ChinaHoliday
     public Boolean TryGetSanyuesan(DateTime date, out HolidayInfo holiday)
     {
         holiday = null;
+        if (!Lunar.IsSupported(date)) return false;
 
-        var cal = new ChineseLunisolarCalendar();
-        var year = cal.GetYear(date);
-        var month = cal.GetMonth(date);
-        var day = cal.GetDayOfMonth(date);
-        var leapMonth = cal.GetLeapMonth(year);
-        if (month == 3 && day == 3 && month != leapMonth)
+        var lunar = Lunar.FromDateTime(date);
+        if (lunar.Month == 3 && lunar.Day == 3 && !lunar.IsLeapMonth)
         {
             holiday = new HolidayInfo
             {

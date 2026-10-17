@@ -1,4 +1,6 @@
-﻿namespace NewLife.Holiday;
+using System.Collections.Concurrent;
+
+namespace NewLife.Holiday;
 
 /// <summary>
 /// 24节气枚举（按公历月份顺序：1月小寒起，至12月冬至止）
@@ -73,7 +75,7 @@ public readonly struct SolarTermResult(SolarTerm term, DateTime termTime, DateTi
     public DateTime TermTime { get; } = termTime;
 
     /// <summary>
-    /// 与节气日零点的带符号天数差。
+    /// 与节气时刻的带符号天数差。
     /// 指定时间在节气之前为正数，在节气之后为负数，可为小数。
     /// </summary>
     public Double DaysTo { get; } = (termTime - from).TotalDays;
@@ -104,6 +106,9 @@ public static class SolarTerms
     // 该算法能在 1901-2100 年范围内给出节气的公历日期（少数年份可能会有 ±1 天误差）。
 
     private const Double D = 0.2422;
+
+    // 节气时刻计算开销较大，按“年份*24+节气”缓存；仅缓存 1901-2100 标准范围，避免无界增长
+    private static readonly ConcurrentDictionary<Int64, DateTime> _cache = new();
 
     // 与枚举顺序完全一致（小寒..冬至）
     private static readonly Double[] C20 = // 1901-2000
@@ -151,6 +156,26 @@ public static class SolarTerms
     /// <param name="term">节气。</param>
     /// <returns>节气发生的本地时间。</returns>
     public static DateTime GetTermTime(Int32 year, SolarTerm term)
+    {
+        var idx = (Int32)term;
+        if (idx < 0 || idx >= TermMonths.Length) throw new ArgumentOutOfRangeException(nameof(term));
+
+        // 仅缓存标准范围，避免任意年份调用导致缓存无界增长
+        if (year is >= 1901 and <= 2100)
+        {
+            var key = (Int64)year * 24 + idx;
+            if (_cache.TryGetValue(key, out var cached)) return cached;
+
+            var time = CalculateTermTime(year, term);
+            _cache.TryAdd(key, time);
+
+            return time;
+        }
+
+        return CalculateTermTime(year, term);
+    }
+
+    private static DateTime CalculateTermTime(Int32 year, SolarTerm term)
     {
         // 先用日级近似算法得到一个接近的日期，作为搜索起点，避免跨年索引不稳定。
         var idx = (Int32)term;

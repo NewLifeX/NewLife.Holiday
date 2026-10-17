@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using System.Reflection;
+﻿using System.Reflection;
 using NewLife.IO;
 
 namespace NewLife.Holiday;
@@ -34,7 +33,9 @@ public class ChinaHoliday : IHoliday
         {
             if (item.EndsWithIgnoreCase(".csv") && item.Contains($".{category}."))
             {
-                var ms = asm.GetManifestResourceStream(item);
+                using var ms = asm.GetManifestResourceStream(item);
+                if (ms == null) continue;
+
                 Load(ms, category);
             }
         }
@@ -97,9 +98,8 @@ public class ChinaHoliday : IHoliday
                 count++;
                 yield return inf;
             }
-
-            // 多天
-            if (inf.Days > 1)
+            // 多天。起始日已在上方返回，避免同一条记录重复产出
+            else if (inf.Days > 1)
             {
                 var d = (Int32)(date - inf.Date).TotalDays;
                 if (d >= 0 && d < inf.Days)
@@ -232,35 +232,21 @@ public class ChinaHoliday : IHoliday
     public Boolean TryGetChunjie(DateTime date, out HolidayInfo holiday)
     {
         holiday = null;
+        if (!Lunar.IsSupported(date)) return false;
 
-        var cal = new ChineseLunisolarCalendar();
-        var year = cal.GetYear(date);
-        var leapMonth = cal.GetLeapMonth(year);
-
-        var lastMonth = leapMonth > 0 ? 13 : 12;
-        var month = cal.GetMonth(date);
-        if (month != lastMonth && month != 1) return false;
+        var lunar = Lunar.FromDateTime(date);
+        if (lunar.IsLeapMonth || lunar.Month is not 1 and not 12) return false;
 
         // 有些年十二月最后一天是二十九，没有三十
-        var day = cal.GetDayOfMonth(date);
-        var isLastDay = cal.GetDayOfMonth(date.AddDays(1)) == 1;
+        var next = date.AddDays(1);
+        var isLastDay = !Lunar.IsSupported(next) || Lunar.FromDateTime(next).Day == 1;
 
-        // 命中范围：除夕 或 正月初一..初三（排除闰月位）
-        var inRange = (month == lastMonth && isLastDay && month != leapMonth) ||
-                      (month == 1 && day >= 1 && day <= 3 && month != leapMonth);
+        // 命中范围：除夕 或 正月初一..初三
+        var inRange = (lunar.Month == 12 && isLastDay) || (lunar.Month == 1 && lunar.Day <= 3);
         if (!inRange) return false;
 
         // 统一以“除夕”为起始日，跨度 4 天
-        DateTime start;
-        if (month == lastMonth && isLastDay)
-        {
-            start = date.Date;
-        }
-        else
-        {
-            // 正月初 N -> 起始 = 当天减去 N 天
-            start = date.Date.AddDays(-day);
-        }
+        var start = lunar.Month == 12 ? date.Date : date.Date.AddDays(-lunar.Day);
 
         holiday = new HolidayInfo
         {
@@ -280,17 +266,11 @@ public class ChinaHoliday : IHoliday
     public Boolean TryGetDuanwu(DateTime date, out HolidayInfo holiday)
     {
         holiday = null;
+        if (!Lunar.IsSupported(date)) return false;
 
-        var cal = new ChineseLunisolarCalendar();
-        var year = cal.GetYear(date);
-        var month = cal.GetMonth(date);
-        var day = cal.GetDayOfMonth(date);
-        var leapMonth = cal.GetLeapMonth(year);
+        var lunar = Lunar.FromDateTime(date);
 
-        // 考虑有闰月
-        var targetMonth = leapMonth > 0 && leapMonth < month ? 6 : 5;
-
-        if (month == targetMonth && day == 5 && month != leapMonth)
+        if (lunar.Month == 5 && lunar.Day == 5 && !lunar.IsLeapMonth)
         {
             holiday = new HolidayInfo
             {
@@ -313,17 +293,11 @@ public class ChinaHoliday : IHoliday
     public Boolean TryGetZhongqiu(DateTime date, out HolidayInfo holiday)
     {
         holiday = null;
+        if (!Lunar.IsSupported(date)) return false;
 
-        var cal = new ChineseLunisolarCalendar();
-        var year = cal.GetYear(date);
-        var month = cal.GetMonth(date);
-        var day = cal.GetDayOfMonth(date);
-        var leapMonth = cal.GetLeapMonth(year);
+        var lunar = Lunar.FromDateTime(date);
 
-        // 考虑有闰月
-        var targetMonth = leapMonth > 0 && leapMonth < month ? 9 : 8;
-
-        if (month == targetMonth && day == 15 && month != leapMonth)
+        if (lunar.Month == 8 && lunar.Day == 15 && !lunar.IsLeapMonth)
         {
             holiday = new HolidayInfo
             {

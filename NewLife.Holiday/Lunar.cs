@@ -65,17 +65,24 @@ public readonly struct Lunar
     }
 
     #region 工厂方法
+    /// <summary>判断指定日期是否在农历支持范围内</summary>
+    /// <param name="date">公历日期</param>
+    /// <returns>是否支持</returns>
+    public static Boolean IsSupported(DateTime date) => date >= Cal.MinSupportedDateTime && date <= Cal.MaxSupportedDateTime;
+
     /// <summary>
     /// 根据公历 <paramref name="dateTime"/> 生成对应的 <see cref="Lunar"/>。
     /// </summary>
     /// <remarks>
-    /// 依赖 <see cref="ChineseLunisolarCalendar"/>，有效范围大致为 1901-02-19 至 2101-01-28。
+    /// 依赖 <see cref="ChineseLunisolarCalendar"/>，有效范围为 1901-02-19 至 2101-01-28。
     /// 超出范围会抛出 <see cref="ArgumentOutOfRangeException"/>。
     /// </remarks>
     /// <param name="dateTime">指定公历日期时间。</param>
     /// <returns>对应的农历对象。</returns>
     public static Lunar FromDateTime(DateTime dateTime)
     {
+        if (!IsSupported(dateTime)) throw new ArgumentOutOfRangeException(nameof(dateTime), "日期超出农历支持范围");
+
         // 取农历年、月（包含闰月插位）、日
         var year = Cal.GetYear(dateTime);
         var monthWithLeap = Cal.GetMonth(dateTime);
