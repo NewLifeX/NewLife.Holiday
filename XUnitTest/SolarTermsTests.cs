@@ -40,14 +40,14 @@ public class SolarTermsTests
         var time = SolarTerms.GetTermTime(year, term);
 
         // 时刻断言：与发布时刻的 UTC 绝对时刻对照
-        var expected = DateTime.SpecifyKind(DateTime.Parse(publishedUtc), DateTimeKind.Utc);
+        var expected = DateTime.SpecifyKind(TestDate.Parse(publishedUtc), DateTimeKind.Utc);
         var diff = Math.Abs((time.ToUniversalTime() - expected).TotalMinutes);
         Assert.True(diff <= 45, $"{year} {term} 实际 {time:yyyy-MM-dd HH:mm}，与发布时刻相差 {diff:n0} 分钟");
 
         // 本地日期断言：仅在中国时区（UTC+8）下验证与历书一致的本地日期
         if (TimeZoneInfo.Local.BaseUtcOffset == TimeSpan.FromHours(8))
         {
-            var date = DateTime.Parse(publishedLocalDate).Date;
+            var date = TestDate.Parse(publishedLocalDate).Date;
             Assert.Equal(date, time.Date);
             Assert.Equal(date, SolarTerms.GetTermDate(year, term));
         }
@@ -92,7 +92,8 @@ public class SolarTermsTests
         var r = Lunar.FromDateTime(new DateTime(2024, 12, 31)).GetNearestSolarTerm();
 
         Assert.Equal(SolarTerm.小寒, r.Term);
-        Assert.Equal(new DateTime(2025, 1, 5).Date, r.TermTime.Date);
+        // 用同一本地时区下的节气日期做一致性断言，避免硬编码日期在非中国时区失效
+        Assert.Equal(SolarTerms.GetTermDate(2025, SolarTerm.小寒), r.TermTime.Date);
         Assert.True(r.DaysTo > 0);
         Assert.False(r.IsTermDay);
         Assert.False(r.IsWithinOneDay);
@@ -102,11 +103,51 @@ public class SolarTermsTests
     [DisplayName("最近节气：节气当天命中且结果格式化包含节气名")]
     public void NearestSolarTerm_OnTermDay()
     {
-        var r = Lunar.FromDateTime(new DateTime(2024, 2, 4)).GetNearestSolarTerm();
+        // 取本时区下立春的本地日期，保证任意时区都能测试“节气当天”语义
+        var termDate = SolarTerms.GetTermDate(2024, SolarTerm.立春);
+        var r = Lunar.FromDateTime(termDate).GetNearestSolarTerm();
 
         Assert.Equal(SolarTerm.立春, r.Term);
         Assert.True(r.IsTermDay);
         Assert.True(r.IsWithinOneDay);
         Assert.Contains("立春", r.ToString());
     }
+
+    [Fact]
+    [DisplayName("最近节气结果_属性与格式化正确")]
+    public void SolarTermResult_Properties()
+    {
+        var from = new DateTime(2025, 3, 20, 12, 0, 0);
+        var time = new DateTime(2025, 3, 20, 17, 1, 0);
+        var r = new SolarTermResult(SolarTerm.春分, time, from);
+
+        Assert.Equal(SolarTerm.春分, r.Term);
+        Assert.Equal(time, r.TermTime);
+        Assert.Equal((time - from).TotalDays, r.DaysTo, 6);
+        Assert.True(r.IsTermDay);
+        Assert.True(r.IsWithinOneDay);
+        Assert.Contains("春分", r.ToString());
+        Assert.Contains("+", r.ToString());
+    }
+
+    [Fact]
+    [DisplayName("节气时刻重复查询_结果一致")]
+    public void RepeatedQuery_ReturnsSameResult()
+    {
+        var first = SolarTerms.GetTermTime(2025, SolarTerm.冬至);
+        var second = SolarTerms.GetTermTime(2025, SolarTerm.冬至);
+
+        Assert.Equal(first, second);
+        Assert.Equal(SolarTerms.GetTermDate(2025, SolarTerm.冬至), first.Date);
+    }
+
+    [Theory]
+    [DisplayName("无效节气值_抛出参数越界异常")]
+    [InlineData(-1)]
+    [InlineData(24)]
+    public void InvalidTerm_Throws(Int32 term)
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() => SolarTerms.GetTermTime(2025, (SolarTerm)term));
+    }
 }
+

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
@@ -9,12 +9,13 @@ namespace XUnitTest;
 public class LunarTests
 {
     [Theory]
+    [DisplayName("基础属性_与ChineseLunisolarCalendar一致")]
     [InlineData("2024-02-10")] // 甲辰年正月初一（春节）
     [InlineData("2023-01-22")] // 癸卯年正月初一
-    [InlineData("2020-05-23")] // 农历四月初一（庚子年）
+    [InlineData("2020-05-23")] // 庚子年闰四月初一
     public void BasicProperties_ShouldMatchChineseLunisolarCalendar(String gregorian)
     {
-        var date = DateTime.Parse(gregorian);
+        var date = TestDate.Parse(gregorian);
         var lunar = NewLife.Holiday.Lunar.FromDateTime(date);
 
         var cal = new ChineseLunisolarCalendar();
@@ -52,12 +53,13 @@ public class LunarTests
     }
 
     [Theory]
+    [DisplayName("干支生肖与中文文本_正确")]
     [InlineData("2024-02-10", "甲辰", "龙", "正", "初一")]
     [InlineData("2023-01-22", "癸卯", "兔", "正", "初一")]
     [InlineData("2020-01-25", "庚子", "鼠", "正", "初一")]
     public void TextualMembers_ShouldBeCorrect(String gregorian, String ganzhi, String zodiac, String monthText, String dayText)
     {
-        var date = DateTime.Parse(gregorian);
+        var date = TestDate.Parse(gregorian);
         var lunar = NewLife.Holiday.Lunar.FromDateTime(date);
 
         // YearGanzhi + Zodiac + MonthText + DayText
@@ -73,6 +75,7 @@ public class LunarTests
     }
 
     [Fact]
+    [DisplayName("日文本_初一初十十一二十廿一廿九三十边界")]
     public void DayText_BoundarySamples_ShouldBeCorrect()
     {
         // 以 2024-02-10 为农历正月初一为基准
@@ -101,59 +104,65 @@ public class LunarTests
         Assert.Equal(21, l21.Day);
         Assert.Equal("廿一", l21.DayText);
 
-        // 找到某个 30 的日子
-        var probe = d1;
-        for (var i = 0; i < 90; i++)
-        {
-            var l = NewLife.Holiday.Lunar.FromDateTime(probe);
-            if (l.Day == 30)
-            {
-                Assert.Equal("三十", l.DayText);
-                break;
-            }
-            probe = probe.AddDays(1);
-        }
+        // 2023-04-19 为闰二月二十九
+        var l29 = NewLife.Holiday.Lunar.FromDateTime(new DateTime(2023, 4, 19));
+        Assert.Equal(29, l29.Day);
+        Assert.Equal("廿九", l29.DayText);
+
+        // 2023-03-21 为二月三十
+        var l30 = NewLife.Holiday.Lunar.FromDateTime(new DateTime(2023, 3, 21));
+        Assert.Equal(30, l30.Day);
+        Assert.Equal("三十", l30.DayText);
     }
 
-    [Fact]
-    public void LeapMonthHandling_ShouldIndicateLeapAndNormalizeMonth()
+    [Theory]
+    [DisplayName("闰月_正确标识并规格化月份")]
+    [InlineData("2020-05-23", 4)] // 庚子年闰四月初一
+    [InlineData("2023-03-22", 2)] // 癸卯年闰二月初一
+    public void LeapMonthHandling_ShouldIndicateLeapAndNormalizeMonth(String gregorian, Int32 month)
     {
-        // 选择一个已知包含闰月的农历年，例如 2012(壬辰年) 闰四月
-        var date = new DateTime(2012, 6, 20); // 大致为闰四月期间的一天
-        var cal = new ChineseLunisolarCalendar();
-        var year = cal.GetYear(date);
-        var m = cal.GetMonth(date);
-        var leapMonth = cal.GetLeapMonth(year);
+        var lunar = NewLife.Holiday.Lunar.FromDateTime(TestDate.Parse(gregorian));
 
-        if (leapMonth == 0)
-        {
-            // 如果运行平台/地区数据不同导致该年无闰月，则跳过
-            return;
-        }
-
-        var lunar = NewLife.Holiday.Lunar.FromDateTime(date);
-
-        if (m == leapMonth)
-        {
-            Assert.True(lunar.IsLeapMonth);
-            Assert.True(lunar.Month >= 1 && lunar.Month <= 12);
-            Assert.Contains("闰", lunar.ToString()); // 覆盖闰月 ToString
-        }
-        else if (m > leapMonth)
-        {
-            Assert.False(lunar.IsLeapMonth);
-            Assert.Equal(m - 1, lunar.Month);
-        }
+        Assert.True(lunar.IsLeapMonth);
+        Assert.Equal(month, lunar.Month);
+        Assert.Contains("闰", lunar.ToString());
     }
 
     [Fact]
+    [DisplayName("闰月之后的月份_回退序号且不标记闰月")]
+    public void MonthAfterLeapMonth_ShouldNormalize()
+    {
+        // 2023-04-20 为闰二月之后的农历三月初一
+        var lunar = NewLife.Holiday.Lunar.FromDateTime(new DateTime(2023, 4, 20));
+
+        Assert.Equal(3, lunar.Month);
+        Assert.False(lunar.IsLeapMonth);
+        Assert.Equal("三", lunar.MonthText);
+        Assert.DoesNotContain("闰", lunar.ToString());
+    }
+
+    [Fact]
+    [DisplayName("农历支持范围_边界可转换且范围外不支持")]
+    public void SupportedRange_Boundaries()
+    {
+        Assert.False(NewLife.Holiday.Lunar.IsSupported(new DateTime(1901, 2, 18)));
+        Assert.True(NewLife.Holiday.Lunar.IsSupported(new DateTime(1901, 2, 19)));
+        Assert.True(NewLife.Holiday.Lunar.IsSupported(new DateTime(2101, 1, 28)));
+        Assert.False(NewLife.Holiday.Lunar.IsSupported(new DateTime(2101, 1, 29)));
+
+        Assert.Equal(1901, NewLife.Holiday.Lunar.FromDateTime(new DateTime(1901, 2, 19)).Year);
+        Assert.Equal(2100, NewLife.Holiday.Lunar.FromDateTime(new DateTime(2101, 1, 28)).Year);
+    }
+
+    [Fact]
+    [DisplayName("月份文本_三年逐日扫描与映射一致")]
     public void MonthText_ShouldMatchMapping_ForManyDates()
     {
         // 扫描一段日期，验证 MonthText 与 Month 的映射关系
         var start = new DateTime(2023, 1, 1);
         var end = new DateTime(2025, 12, 31);
 
-        var map = new Dictionary<int, string>
+        var map = new Dictionary<Int32, String>
         {
             [1] = "正",
             [2] = "二",
@@ -181,6 +190,9 @@ public class LunarTests
     public void FromDateTime_OutOfRange_Throws()
     {
         Assert.Throws<ArgumentOutOfRangeException>(() => NewLife.Holiday.Lunar.FromDateTime(new DateTime(1800, 1, 1)));
+        Assert.Throws<ArgumentOutOfRangeException>(() => NewLife.Holiday.Lunar.FromDateTime(new DateTime(1901, 2, 18)));
+        Assert.Throws<ArgumentOutOfRangeException>(() => NewLife.Holiday.Lunar.FromDateTime(new DateTime(2101, 1, 29)));
         Assert.Throws<ArgumentOutOfRangeException>(() => NewLife.Holiday.Lunar.FromDateTime(new DateTime(2200, 1, 1)));
     }
 }
+
