@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/Other/">
+    <File Path=".github/workflows/aot.yml" />
+    <File Path=".github/workflows/publish-beta.yml" />
+    <File Path=".github/workflows/publish.yml" />
+    <File Path=".github/workflows/test.yml" />
+    <File Path="README.md" />
+  </Folder>
+  <Project Path="AotSmoke/AotSmoke.csproj" />
+  <Project Path="NewLife.Holiday/NewLife.Holiday.csproj" />
+  <Project Path="Test/Test.csproj" />
+  <Project Path="XUnitTest/XUnitTest.csproj" />
+</Solution>
