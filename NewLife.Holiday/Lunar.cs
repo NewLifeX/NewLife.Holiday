@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using NewLife;
+using System.Globalization;
 
 namespace NewLife.Holiday;
 
@@ -81,7 +82,7 @@ public readonly struct Lunar
     /// <returns>对应的农历对象。</returns>
     public static Lunar FromDateTime(DateTime dateTime)
     {
-        if (!IsSupported(dateTime)) throw new ArgumentOutOfRangeException(nameof(dateTime), "日期超出农历支持范围");
+        if (!IsSupported(dateTime)) throw new ArgumentOutOfRangeException(nameof(dateTime), L.T("The date is outside the supported lunar calendar range."));
 
         // 取农历年、月（包含闰月插位）、日
         var year = Cal.GetYear(dateTime);
