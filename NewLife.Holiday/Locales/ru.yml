@@ -1,2 +1,6 @@
 # Русский 词表（ru）。键为英文源文，与源码字符串逐字一致；缺少的键运行时回退英文。
 "The date is outside the supported lunar calendar range.": "Дата выходит за пределы поддерживаемого диапазона лунного календаря."
+"Loaded {0} holiday records from {1} embedded resources for [{2}].": "Загружено {0} записей о праздниках из {1} внедрённых ресурсов для [{2}]."
+"Failed to load embedded resource [{0}]: {1}": "Не удалось загрузить внедрённый ресурс [{0}]: {1}"
+"Skipped {0} invalid holiday records from [{1}].": "Пропущено {0} недопустимых записей о праздниках из [{1}]."
+"{0} {1} {2} days": "{0} {1} {2} дн."

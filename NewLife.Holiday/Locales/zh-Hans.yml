@@ -1,2 +1,6 @@
 # 简体中文译文。键为英文源文，缺失时运行期回退英文。
 "The date is outside the supported lunar calendar range.": "日期超出农历支持范围"
+"Loaded {0} holiday records from {1} embedded resources for [{2}].": "已从 {1} 个嵌入资源加载 {0} 条假期记录，分类[{2}]"
+"Failed to load embedded resource [{0}]: {1}": "加载嵌入资源[{0}]失败：{1}"
+"Skipped {0} invalid holiday records from [{1}].": "已跳过[{1}]中 {0} 条无效假期记录"
+"{0} {1} {2} days": "{0} {1} {2}天"

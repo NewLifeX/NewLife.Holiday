@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using NewLife.IO;
+using NewLife.Log;
 
 namespace NewLife.Holiday;
 
@@ -9,12 +10,24 @@ public class ChinaHoliday : IHoliday
     #region 属性
     /// <summary>所有假期信息</summary>
     public IList<HolidayInfo> Infos { get; set; }
+
+    /// <summary>日志对象。默认空日志，需要观察数据加载过程时传入 XTrace.Log 或自定义日志</summary>
+    public ILog Log { get; set; } = Logger.Null;
+
+    /// <summary>日志前缀。实例前缀不参与本地化，先翻译消息再拼接</summary>
+    public virtual String LogPrefix => $"[{GetType().Name}]";
     #endregion
 
     #region 构造
     /// <summary>实例化</summary>
-    public ChinaHoliday()
+    public ChinaHoliday() : this(null) { }
+
+    /// <summary>使用指定日志对象实例化，便于记录数据加载过程</summary>
+    /// <param name="log">日志对象，为空时使用空日志</param>
+    public ChinaHoliday(ILog log)
     {
+        if (log != null) Log = log;
+
         Load("China");
 
         // 排序，先按照日期排，再按照状态排，便于放假优先覆盖调休
@@ -29,6 +42,8 @@ public class ChinaHoliday : IHoliday
         var asm = Assembly.GetExecutingAssembly();
         var names = asm.GetManifestResourceNames();
 
+        var files = 0;
+        var start = Infos?.Count ?? 0;
         foreach (var item in names)
         {
             if (item.EndsWithIgnoreCase(".csv") && item.Contains($".{category}."))
@@ -36,9 +51,20 @@ public class ChinaHoliday : IHoliday
                 using var ms = asm.GetManifestResourceStream(item);
                 if (ms == null) continue;
 
-                Load(ms, category);
+                try
+                {
+                    Load(ms, category);
+                    files++;
+                }
+                catch (Exception ex)
+                {
+                    WriteError("Failed to load embedded resource [{0}]: {1}", item, ex.Message);
+                    throw;
+                }
             }
         }
+
+        WriteLog("Loaded {0} holiday records from {1} embedded resources for [{2}].", (Infos?.Count ?? 0) - start, files, category);
     }
     #endregion
 
@@ -51,6 +77,7 @@ public class ChinaHoliday : IHoliday
         using var csv = new CsvFile(stream, true);
 
         var list = Infos ??= [];
+        var skip = 0;
 
         while (true)
         {
@@ -74,7 +101,13 @@ public class ChinaHoliday : IHoliday
 
                 list.Add(info);
             }
+            else
+            {
+                skip++;
+            }
         }
+
+        if (skip > 0) WriteDebug("Skipped {0} invalid holiday records from [{1}].", skip, category);
     }
 
     /// <summary>查询指定日期的假期信息</summary>
@@ -312,5 +345,22 @@ public class ChinaHoliday : IHoliday
 
         return false;
     }
+    #endregion
+
+    #region 日志
+    /// <summary>写调试日志。前缀在翻译之后拼接</summary>
+    /// <param name="format">格式化模板</param>
+    /// <param name="args">格式化参数</param>
+    protected virtual void WriteDebug(String format, params Object[] args) => Log?.WritePrefixed(LogLevel.Debug, LogPrefix, format, args);
+
+    /// <summary>写信息日志。前缀在翻译之后拼接</summary>
+    /// <param name="format">格式化模板</param>
+    /// <param name="args">格式化参数</param>
+    protected virtual void WriteLog(String format, params Object[] args) => Log?.InfoPrefixed(LogPrefix, format, args);
+
+    /// <summary>写错误日志。前缀在翻译之后拼接</summary>
+    /// <param name="format">格式化模板</param>
+    /// <param name="args">格式化参数</param>
+    protected virtual void WriteError(String format, params Object[] args) => Log?.ErrorPrefixed(LogPrefix, format, args);
     #endregion
 }

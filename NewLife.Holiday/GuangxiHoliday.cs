@@ -1,11 +1,17 @@
-﻿namespace NewLife.Holiday;
+﻿using NewLife.Log;
+
+namespace NewLife.Holiday;
 
 /// <summary>广西假期。特有三月三</summary>
 public class GuangxiHoliday : ChinaHoliday
 {
     #region 构造
     /// <summary>实例化</summary>
-    public GuangxiHoliday()
+    public GuangxiHoliday() : this(null) { }
+
+    /// <summary>使用指定日志对象实例化，便于记录数据加载过程</summary>
+    /// <param name="log">日志对象，为空时使用空日志</param>
+    public GuangxiHoliday(ILog log) : base(log)
     {
         // 加载所有嵌入式资源
         //Load("China");

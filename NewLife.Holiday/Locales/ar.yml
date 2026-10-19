@@ -1,2 +1,6 @@
 # العربية 词表（ar）。键为英文源文，与源码字符串逐字一致；缺少的键运行时回退英文。
 "The date is outside the supported lunar calendar range.": "التاريخ خارج نطاق التقويم القمري المدعوم."
+"Loaded {0} holiday records from {1} embedded resources for [{2}].": "تم تحميل {0} من سجلات العطلات من {1} من الموارد المضمّنة لـ [{2}]."
+"Failed to load embedded resource [{0}]: {1}": "فشل تحميل المورد المضمّن [{0}]: {1}"
+"Skipped {0} invalid holiday records from [{1}].": "تم تخطي {0} من سجلات العطلات غير الصالحة من [{1}]."
+"{0} {1} {2} days": "{0} {1} {2} أيام"

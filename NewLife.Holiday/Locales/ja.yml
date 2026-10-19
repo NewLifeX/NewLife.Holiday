@@ -1,2 +1,6 @@
 # 日本語 词表（ja）。键为英文源文，与源码字符串逐字一致；缺少的键运行时回退英文。
 "The date is outside the supported lunar calendar range.": "日付がサポートされている旧暦の範囲外です。"
+"Loaded {0} holiday records from {1} embedded resources for [{2}].": "{1} 個の埋め込みリソースから {0} 件の休日レコードを読み込みました（[{2}]）"
+"Failed to load embedded resource [{0}]: {1}": "埋め込みリソース [{0}] の読み込みに失敗しました: {1}"
+"Skipped {0} invalid holiday records from [{1}].": "[{1}] の無効な休日レコード {0} 件をスキップしました。"
+"{0} {1} {2} days": "{0} {1} {2}日"

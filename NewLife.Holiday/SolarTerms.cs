@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Globalization;
 
 namespace NewLife.Holiday;
 
@@ -87,7 +88,14 @@ public readonly struct SolarTermResult(SolarTerm term, DateTime termTime, DateTi
     public Boolean IsWithinOneDay { get; } = Math.Abs((termTime - from).TotalDays) <= 1;
 
     /// <summary>格式化为“节气 yyyy-MM-dd ±X天”。</summary>
-    public override String ToString() => $"{Term} {TermTime:yyyy-MM-dd HH:mm:ss} {(DaysTo >= 0 ? "+" : "")}{DaysTo:0.#}天";
+    public override String ToString()
+    {
+        // 日期与天数使用固定格式，避免非公历区域导致输出漂移；仅翻译度量词
+        var sign = DaysTo >= 0 ? "+" : String.Empty;
+        var days = sign + DaysTo.ToString("0.#", CultureInfo.InvariantCulture);
+
+        return Localization.Translate("{0} {1} {2} days", Term, TermTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture), days);
+    }
 }
 
 /// <summary>

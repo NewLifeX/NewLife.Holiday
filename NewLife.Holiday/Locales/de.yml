@@ -1,2 +1,6 @@
 # Deutsch 词表（de）。键为英文源文，与源码字符串逐字一致；缺少的键运行时回退英文。
 "The date is outside the supported lunar calendar range.": "Das Datum liegt außerhalb des unterstützten Bereichs des Mondkalenders."
+"Loaded {0} holiday records from {1} embedded resources for [{2}].": "{0} Ferientage-Einträge aus {1} eingebetteten Ressourcen für [{2}] geladen."
+"Failed to load embedded resource [{0}]: {1}": "Eingebettete Ressource [{0}] konnte nicht geladen werden: {1}"
+"Skipped {0} invalid holiday records from [{1}].": "{0} ungültige Ferientage-Einträge aus [{1}] übersprungen."
+"{0} {1} {2} days": "{0} {1} {2} Tage"
