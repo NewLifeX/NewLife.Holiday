@@ -8,9 +8,11 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Globalization;
 using System.Text;
 using NewLife;
 using NewLife.Holiday;
+using NewLife.Log;
 
 try { Console.OutputEncoding = Encoding.UTF8; } catch { }
 
@@ -262,6 +264,43 @@ Run("节气-本地日期一致性", () =>
     }
 });
 
+// ---------------- 多语言与日志 ----------------
+
+Run("多语言-运行时翻译与带前缀日志", () =>
+{
+    var savedCulture = Localization.Culture;
+    var savedLogCulture = Localization.LogCulture;
+    try
+    {
+        var result = new SolarTermResult(SolarTerm.春分, new DateTime(2025, 3, 20, 17, 1, 0), new DateTime(2025, 3, 20, 12, 0, 0));
+
+        // 界面语言：编译期词表在 NativeAOT 下可用
+        Localization.Culture = CultureInfo.GetCultureInfo("zh-Hans");
+        if (!result.ToString().EndsWith("天")) throw new Exception($"中文译文异常: {result}");
+
+        // 带实例前缀日志：先翻译消息再拼接前缀
+        Localization.LogCulture = CultureInfo.GetCultureInfo("zh-Hans");
+        var log = new ProbeLog();
+        _ = new ChinaHoliday(log);
+        if (log.Last == null || !log.Last.StartsWith("[ChinaHoliday]")) throw new Exception($"日志前缀异常: {log.Last}");
+        if (!log.Last.Contains("条假期记录")) throw new Exception($"日志译文异常: {log.Last}");
+
+        // 无译文的语言回退英文
+        Localization.Culture = CultureInfo.GetCultureInfo("en");
+        Localization.LogCulture = CultureInfo.GetCultureInfo("sw-KE");
+        if (!result.ToString().EndsWith(" days")) throw new Exception($"英文回退异常: {result}");
+
+        log = new ProbeLog();
+        _ = new ChinaHoliday(log);
+        if (log.Last == null || !log.Last.Contains("holiday records")) throw new Exception($"日志英文回退异常: {log.Last}");
+    }
+    finally
+    {
+        Localization.Culture = savedCulture;
+        Localization.LogCulture = savedLogCulture;
+    }
+});
+
 // ---------------- 汇总 ----------------
 
 Console.WriteLine("=== summary ===");
@@ -273,3 +312,24 @@ foreach (var r in results)
 }
 Console.WriteLine($"total={results.Count} pass={results.Count - failed} fail={failed}");
 Environment.ExitCode = failed;
+
+sealed class ProbeLog : ILog
+{
+    public String? Last { get; private set; }
+
+    public Boolean Enable { get; set; } = true;
+
+    public LogLevel Level { get; set; } = LogLevel.Debug;
+
+    public void Write(LogLevel level, String format, params Object?[] args) => Last = args.Length > 0 ? String.Format(format, args) : format;
+
+    public void Debug(String format, params Object?[] args) => Write(LogLevel.Debug, format, args);
+
+    public void Info(String format, params Object?[] args) => Write(LogLevel.Info, format, args);
+
+    public void Warn(String format, params Object?[] args) => Write(LogLevel.Warn, format, args);
+
+    public void Error(String format, params Object?[] args) => Write(LogLevel.Error, format, args);
+
+    public void Fatal(String format, params Object?[] args) => Write(LogLevel.Fatal, format, args);
+}

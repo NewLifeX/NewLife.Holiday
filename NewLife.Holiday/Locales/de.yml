@@ -3,4 +3,5 @@
 "Loaded {0} holiday records from {1} embedded resources for [{2}].": "{0} Ferientage-Einträge aus {1} eingebetteten Ressourcen für [{2}] geladen."
 "Failed to load embedded resource [{0}]: {1}": "Eingebettete Ressource [{0}] konnte nicht geladen werden: {1}"
 "Skipped {0} invalid holiday records from [{1}].": "{0} ungültige Ferientage-Einträge aus [{1}] übersprungen."
+"Invalid solar term [{0}].": "Ungültiger Sonnenbegriff [{0}]."
 "{0} {1} {2} days": "{0} {1} {2} Tage"

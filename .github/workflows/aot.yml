@@ -43,7 +43,7 @@ jobs:
       if: runner.os == 'Linux'
       run: sudo apt-get update && sudo apt-get install -y clang zlib1g-dev
     - name: JIT Baseline
-      # 同一冒烟工程以运行时模式运行（16 场景），为 NativeAOT 结果提供对照
+      # 同一冒烟工程以运行时模式运行（17 场景），为 NativeAOT 结果提供对照
       env:
         TZ: Asia/Shanghai
       run: dotnet run -c Release --project AotSmoke/AotSmoke.csproj
@@ -95,7 +95,7 @@ jobs:
       run: |
         dotnet restore AotSmoke/AotSmoke.csproj
         dotnet build AotSmoke/AotSmoke.csproj -c Release --no-restore
-    - name: JIT Smoke in loong64 Container (16 场景)
+    - name: JIT Smoke in loong64 Container (17 场景)
       run: |
         docker run --rm --platform linux/loong64 \
           -v "$PWD:/src" -w /src \

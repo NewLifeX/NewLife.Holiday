@@ -166,7 +166,7 @@ public static class SolarTerms
     public static DateTime GetTermTime(Int32 year, SolarTerm term)
     {
         var idx = (Int32)term;
-        if (idx < 0 || idx >= TermMonths.Length) throw new ArgumentOutOfRangeException(nameof(term));
+        if (idx < 0 || idx >= TermMonths.Length) throw new ArgumentOutOfRangeException(nameof(term), L.T("Invalid solar term [{0}].", term));
 
         // 仅缓存标准范围，避免任意年份调用导致缓存无界增长
         if (year is >= 1901 and <= 2100)

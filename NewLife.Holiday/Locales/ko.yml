@@ -3,4 +3,5 @@
 "Loaded {0} holiday records from {1} embedded resources for [{2}].": "{1}개의 포함된 리소스에서 휴일 레코드 {0}개를 불러왔습니다. ([{2}])"
 "Failed to load embedded resource [{0}]: {1}": "포함된 리소스 [{0}]을(를) 불러오지 못했습니다: {1}"
 "Skipped {0} invalid holiday records from [{1}].": "[{1}]의 잘못된 휴일 레코드 {0}개를 건너뛰었습니다."
+"Invalid solar term [{0}].": "잘못된 절기 [{0}]입니다."
 "{0} {1} {2} days": "{0} {1} {2}일"

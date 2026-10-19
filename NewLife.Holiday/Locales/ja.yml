@@ -3,4 +3,5 @@
 "Loaded {0} holiday records from {1} embedded resources for [{2}].": "{1} 個の埋め込みリソースから {0} 件の休日レコードを読み込みました（[{2}]）"
 "Failed to load embedded resource [{0}]: {1}": "埋め込みリソース [{0}] の読み込みに失敗しました: {1}"
 "Skipped {0} invalid holiday records from [{1}].": "[{1}] の無効な休日レコード {0} 件をスキップしました。"
+"Invalid solar term [{0}].": "無効な節気 [{0}] です。"
 "{0} {1} {2} days": "{0} {1} {2}日"

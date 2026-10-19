@@ -180,6 +180,25 @@ public class LocalizationTests
         }
     }
 
+    [Fact]
+    [DisplayName("无效节气_异常消息按界面语言翻译")]
+    public void InvalidSolarTerm_TranslatesMessage()
+    {
+        var saved = Localization.Culture;
+        try
+        {
+            Localization.Culture = CultureInfo.GetCultureInfo("zh-Hans");
+
+            var ex = Assert.Throws<ArgumentOutOfRangeException>(() => SolarTerms.GetTermTime(2025, (SolarTerm)(-1)));
+
+            Assert.Contains("无效节气[-1]", ex.Message);
+        }
+        finally
+        {
+            Localization.Culture = saved;
+        }
+    }
+
     private sealed class ProbeLog : ILog
     {
         public List<String> Lines { get; } = [];
