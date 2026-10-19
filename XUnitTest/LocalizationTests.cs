@@ -200,28 +200,49 @@ public class LocalizationTests
     }
 
     [Theory]
-    [DisplayName("运行时语言表_11 种语言均可用")]
-    [InlineData("zh-Hans")]
-    [InlineData("zh-Hant")]
-    [InlineData("es")]
-    [InlineData("de")]
-    [InlineData("ja")]
-    [InlineData("fr")]
-    [InlineData("pt")]
-    [InlineData("ru")]
-    [InlineData("ko")]
-    [InlineData("ar")]
-    public void RuntimeLocales_AreSupported(String name)
+    [DisplayName("翻译表覆盖全部运行时语言")]
+    [InlineData("zh-Hans", "天")]
+    [InlineData("zh-Hant", "天")]
+    [InlineData("de", "Tage")]
+    [InlineData("es", "días")]
+    [InlineData("fr", "jours")]
+    [InlineData("ja", "日")]
+    [InlineData("ko", "일")]
+    [InlineData("pt", "dias")]
+    [InlineData("ru", "дн.")]
+    [InlineData("ar", "أيام")]
+    public void RuntimeLocales_AreSupported(String name, String expected)
     {
         var saved = Localization.Culture;
         try
         {
             Localization.Culture = CultureInfo.GetCultureInfo(name);
 
-            const String key = "The date is outside the supported lunar calendar range.";
-            var text = Localization.Translate(key);
+            var text = Localization.Translate("{0} {1} {2} days", "春分", "2025-03-20", "+1");
 
-            Assert.NotEqual(key, text);
+            Assert.EndsWith(expected, text);
+        }
+        finally
+        {
+            Localization.Culture = saved;
+        }
+    }
+
+    [Fact]
+    [DisplayName("简体中文词表_覆盖全部运行时消息")]
+    public void Translate_AllKeys_zhHans()
+    {
+        var saved = Localization.Culture;
+        try
+        {
+            Localization.Culture = CultureInfo.GetCultureInfo("zh-Hans");
+
+            Assert.Equal("日期超出农历支持范围", Localization.Translate("The date is outside the supported lunar calendar range."));
+            Assert.Equal("已从 7 个嵌入资源加载 91 条假期记录，分类[China]", Localization.Translate("Loaded {0} holiday records from {1} embedded resources for [{2}].", 91, 7, "China"));
+            Assert.Equal("加载嵌入资源[x]失败：y", Localization.Translate("Failed to load embedded resource [{0}]: {1}", "x", "y"));
+            Assert.Equal("已跳过[Test]中 2 条无效假期记录", Localization.Translate("Skipped {0} invalid holiday records from [{1}].", 2, "Test"));
+            Assert.Equal("无效节气[24]", Localization.Translate("Invalid solar term [{0}].", 24));
+            Assert.Equal("春分 2025-03-20 +1天", Localization.Translate("{0} {1} {2} days", "春分", "2025-03-20", "+1"));
         }
         finally
         {
