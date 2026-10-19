@@ -27,8 +27,9 @@ dotnet add package NewLife.Holiday
 ## 快速開始
 
 ```csharp
-var holiday = new ChinaHoliday();
-var isHoliday = holiday.Check(DateTime.Today);
+using NewLife.Holiday;
+
+var isHoliday = DateTime.Today.IsChinaHoliday();
 ```
 
 ## 核心特性
