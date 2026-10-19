@@ -199,6 +199,60 @@ public class LocalizationTests
         }
     }
 
+    [Theory]
+    [DisplayName("运行时语言表_11 种语言均可用")]
+    [InlineData("zh-Hans")]
+    [InlineData("zh-Hant")]
+    [InlineData("es")]
+    [InlineData("de")]
+    [InlineData("ja")]
+    [InlineData("fr")]
+    [InlineData("pt")]
+    [InlineData("ru")]
+    [InlineData("ko")]
+    [InlineData("ar")]
+    public void RuntimeLocales_AreSupported(String name)
+    {
+        var saved = Localization.Culture;
+        try
+        {
+            Localization.Culture = CultureInfo.GetCultureInfo(name);
+
+            const String key = "The date is outside the supported lunar calendar range.";
+            var text = Localization.Translate(key);
+
+            Assert.NotEqual(key, text);
+        }
+        finally
+        {
+            Localization.Culture = saved;
+        }
+    }
+
+    [Fact]
+    [DisplayName("日志语言_优先于界面语言")]
+    public void LogCulture_TakesPriority()
+    {
+        var savedCulture = Localization.Culture;
+        var savedLogCulture = Localization.LogCulture;
+        try
+        {
+            Localization.Culture = CultureInfo.GetCultureInfo("zh-Hans");
+            Localization.LogCulture = CultureInfo.GetCultureInfo("en");
+            var log = new ProbeLog();
+
+            _ = new ChinaHoliday(log);
+
+            Assert.NotEmpty(log.Lines);
+            Assert.Contains("Loaded", log.Lines[log.Lines.Count - 1]);
+        }
+        finally
+        {
+            Localization.Culture = savedCulture;
+            Localization.LogCulture = savedLogCulture;
+        }
+    }
+
     private sealed class ProbeLog : ILog
     {
         public List<String> Lines { get; } = [];
