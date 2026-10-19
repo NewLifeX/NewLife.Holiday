@@ -11,10 +11,10 @@
 [![contributors](https://img.shields.io/github/contributors/NewLifeX/NewLife.Holiday?logo=github)](https://github.com/NewLifeX/NewLife.Holiday/graphs/contributors)
 
 <!-- lang:start -->
-🌐 [中文](README.md) | [繁體中文](README.zh-TW.md) | [English](README.en.md) | [Español](README.es.md) | [Deutsch](README.de.md) | [日本語](README.ja.md) | [Français](README.fr.md) | [Português](README.pt.md) | [Русский](README.ru.md) | [العربية](README.ar.md)
+🌐 [English](README.md) | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md) | [Español](README.es.md) | [Deutsch](README.de.md) | [日本語](README.ja.md) | [Français](README.fr.md) | [Português](README.pt.md) | [Русский](README.ru.md) | [العربية](README.ar.md)
 <!-- lang:end -->
 
-> 이 번역은 중국어 버전보다 늦을 수 있습니다.
+> 이 번역은 영어 버전보다 늦을 수 있으며, 기준은 [English README](README.md)입니다.
 
 NewLife.Holiday는 중국 본토와 광시의 연도별 공휴일·대체휴일 데이터를 내장하고, 음력 명절·24절기·영업일 판정을 오프라인으로 제공합니다.
 
