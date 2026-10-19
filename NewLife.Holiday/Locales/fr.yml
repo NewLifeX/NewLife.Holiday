@@ -1,0 +1,2 @@
+# Français 词表（fr）。键为英文源文，与源码字符串逐字一致；缺少的键运行时回退英文。
+"The date is outside the supported lunar calendar range.": "La date est en dehors de la plage prise en charge du calendrier lunaire."

@@ -1,0 +1,2 @@
+# 한국어 词表（ko）。键为英文源文，与源码字符串逐字一致；缺少的键运行时回退英文。
+"The date is outside the supported lunar calendar range.": "날짜가 지원되는 음력 범위를 벗어났습니다."
