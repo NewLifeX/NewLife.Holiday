@@ -8,14 +8,14 @@ namespace NewLife.Holiday;
 public enum HolidayStatus
 {
     /// <summary>常规。工作日正常上班，周末休息</summary>
-    [Description("常规")]
+    [Description("Regular")]
     Normal = 0,
 
     /// <summary>放假。无需上班</summary>
-    [Description("放假")]
+    [Description("Holiday")]
     On = 1,
 
     /// <summary>调休。周末也要上班</summary>
-    [Description("调休")]
+    [Description("Make-up workday")]
     Off = 2,
 }

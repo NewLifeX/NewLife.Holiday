@@ -1,7 +1,12 @@
 # Português 词表（pt）。键为英文源文，与源码字符串逐字一致；缺少的键运行时回退英文。
+"NewLife.Holiday - Chinese Holiday Library": "NewLife.Holiday - Biblioteca de feriados chineses"
+"Chinese holiday and adjusted-workday identification library with built-in annual holiday data and lunar festival support. Works fully offline and supports .NET Framework 4.5, .NET Standard 2.0/2.1 and modern .NET.": "Biblioteca de identificação de feriados e dias de trabalho compensatório da China, com dados anuais integrados e suporte a festivais do calendário lunar. Funciona totalmente offline e oferece suporte a .NET Framework 4.5, .NET Standard 2.0/2.1 e .NET moderno."
 "The date is outside the supported lunar calendar range.": "A data está fora do intervalo suportado do calendário lunar."
 "Loaded {0} holiday records from {1} embedded resources for [{2}].": "{0} registros de feriados carregados de {1} recursos incorporados para [{2}]."
 "Failed to load embedded resource [{0}]: {1}": "Falha ao carregar o recurso incorporado [{0}]: {1}"
 "Skipped {0} invalid holiday records from [{1}].": "{0} registros de feriados inválidos de [{1}] ignorados."
 "Invalid solar term [{0}].": "Termo solar inválido [{0}]."
 "{0} {1} {2} days": "{0} {1} {2} dias"
+"Regular": "Normal"
+"Holiday": "Feriado"
+"Make-up workday": "Dia de trabalho compensatório"

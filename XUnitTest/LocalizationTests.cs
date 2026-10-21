@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
+using System.Reflection;
 using System.Text;
 using NewLife;
 using NewLife.Holiday;
@@ -221,6 +222,65 @@ public class LocalizationTests
             var text = Localization.Translate("{0} {1} {2} days", "春分", "2025-03-20", "+1");
 
             Assert.EndsWith(expected, text);
+        }
+        finally
+        {
+            Localization.Culture = saved;
+        }
+    }
+
+    [Fact]
+    [DisplayName("程序集元数据_英文源文且全部语言有译文")]
+    public void AssemblyMetadata_IsLocalized()
+    {
+        var asm = typeof(ChinaHoliday).Assembly;
+        var title = asm.GetCustomAttribute<AssemblyTitleAttribute>()?.Title;
+        var description = asm.GetCustomAttribute<AssemblyDescriptionAttribute>()?.Description;
+        Assert.Equal("NewLife.Holiday - Chinese Holiday Library", title);
+        Assert.False(description.IsNullOrEmpty());
+
+        var saved = Localization.Culture;
+        try
+        {
+            foreach (var name in new[] { "zh-Hans", "zh-Hant", "de", "es", "fr", "ja", "ko", "pt", "ru", "ar" })
+            {
+                Localization.Culture = CultureInfo.GetCultureInfo(name);
+                Assert.NotEqual(title, Localization.Translate(title!));
+                Assert.NotEqual(description, Localization.Translate(description!));
+            }
+
+            Localization.Culture = CultureInfo.GetCultureInfo("zh-Hans");
+            Assert.Equal("NewLife.Holiday - 中国节假日识别库", Localization.Translate(title!));
+            Assert.Contains("农历节日判定", Localization.Translate(description!));
+        }
+        finally
+        {
+            Localization.Culture = saved;
+        }
+    }
+
+    [Theory]
+    [DisplayName("假期状态元数据_按界面语言翻译")]
+    [InlineData("zh-Hans", "常规", "放假", "调休")]
+    [InlineData("zh-Hant", "常規", "放假", "調休")]
+    [InlineData("de", "Regulär", "Feiertag", "Ausgleichsarbeitstag")]
+    [InlineData("es", "Normal", "Día festivo", "Jornada de ajuste")]
+    [InlineData("fr", "Normal", "Jour férié", "Journée de rattrapage")]
+    [InlineData("ja", "通常", "休日", "振替出勤")]
+    [InlineData("ko", "일반", "휴일", "대체 근무")]
+    [InlineData("pt", "Normal", "Feriado", "Dia de trabalho compensatório")]
+    [InlineData("ru", "Обычный", "Праздник", "Перенос рабочего дня")]
+    [InlineData("ar", "عادي", "عطلة", "يوم عمل تعويضي")]
+    public void HolidayStatusMetadata_IsLocalized(String name, String normal, String holiday, String off)
+    {
+        var saved = Localization.Culture;
+        try
+        {
+            Localization.Culture = CultureInfo.GetCultureInfo(name);
+
+            Assert.Equal(normal, Localization.Translate(HolidayStatus.Normal.GetDescription()));
+            Assert.Equal(holiday, Localization.Translate(HolidayStatus.On.GetDescription()));
+            Assert.Equal(off, Localization.Translate(HolidayStatus.Off.GetDescription()));
         }
         finally
         {

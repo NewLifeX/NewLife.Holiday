@@ -1,7 +1,12 @@
 # 한국어 词表（ko）。键为英文源文，与源码字符串逐字一致；缺少的键运行时回退英文。
+"NewLife.Holiday - Chinese Holiday Library": "NewLife.Holiday - 중국 공휴일 판별 라이브러리"
+"Chinese holiday and adjusted-workday identification library with built-in annual holiday data and lunar festival support. Works fully offline and supports .NET Framework 4.5, .NET Standard 2.0/2.1 and modern .NET.": "연간 공휴일 데이터와 음력 명절 판정을 기본 제공하는 중국 공휴일·대체 근무일 판별 라이브러리입니다. 완전한 오프라인으로 동작하며 .NET Framework 4.5, .NET Standard 2.0/2.1 및 최신 .NET을 지원합니다."
 "The date is outside the supported lunar calendar range.": "날짜가 지원되는 음력 범위를 벗어났습니다."
 "Loaded {0} holiday records from {1} embedded resources for [{2}].": "{1}개의 포함된 리소스에서 휴일 레코드 {0}개를 불러왔습니다. ([{2}])"
 "Failed to load embedded resource [{0}]: {1}": "포함된 리소스 [{0}]을(를) 불러오지 못했습니다: {1}"
 "Skipped {0} invalid holiday records from [{1}].": "[{1}]의 잘못된 휴일 레코드 {0}개를 건너뛰었습니다."
 "Invalid solar term [{0}].": "잘못된 절기 [{0}]입니다."
 "{0} {1} {2} days": "{0} {1} {2}일"
+"Regular": "일반"
+"Holiday": "휴일"
+"Make-up workday": "대체 근무"

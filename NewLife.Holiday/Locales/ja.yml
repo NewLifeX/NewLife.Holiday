@@ -1,7 +1,12 @@
 # 日本語 词表（ja）。键为英文源文，与源码字符串逐字一致；缺少的键运行时回退英文。
+"NewLife.Holiday - Chinese Holiday Library": "NewLife.Holiday - 中国の祝日判定ライブラリ"
+"Chinese holiday and adjusted-workday identification library with built-in annual holiday data and lunar festival support. Works fully offline and supports .NET Framework 4.5, .NET Standard 2.0/2.1 and modern .NET.": "中国の祝日と振替出勤を判定するライブラリ。年度ごとの祝日データを内蔵し、旧暦の祝日にも対応します。完全オフラインで動作し、.NET Framework 4.5、.NET Standard 2.0/2.1、最新の .NET をサポートします。"
 "The date is outside the supported lunar calendar range.": "日付がサポートされている旧暦の範囲外です。"
 "Loaded {0} holiday records from {1} embedded resources for [{2}].": "{1} 個の埋め込みリソースから {0} 件の休日レコードを読み込みました（[{2}]）"
 "Failed to load embedded resource [{0}]: {1}": "埋め込みリソース [{0}] の読み込みに失敗しました: {1}"
 "Skipped {0} invalid holiday records from [{1}].": "[{1}] の無効な休日レコード {0} 件をスキップしました。"
 "Invalid solar term [{0}].": "無効な節気 [{0}] です。"
 "{0} {1} {2} days": "{0} {1} {2}日"
+"Regular": "通常"
+"Holiday": "休日"
+"Make-up workday": "振替出勤"

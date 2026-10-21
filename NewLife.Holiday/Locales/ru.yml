@@ -1,7 +1,12 @@
 # Русский 词表（ru）。键为英文源文，与源码字符串逐字一致；缺少的键运行时回退英文。
+"NewLife.Holiday - Chinese Holiday Library": "NewLife.Holiday - Библиотека китайских праздников"
+"Chinese holiday and adjusted-workday identification library with built-in annual holiday data and lunar festival support. Works fully offline and supports .NET Framework 4.5, .NET Standard 2.0/2.1 and modern .NET.": "Библиотека определения китайских праздников и переносов рабочих дней со встроенными ежегодными данными и поддержкой праздников лунного календаря. Работает полностью автономно; поддерживает .NET Framework 4.5, .NET Standard 2.0/2.1 и современные версии .NET."
 "The date is outside the supported lunar calendar range.": "Дата выходит за пределы поддерживаемого диапазона лунного календаря."
 "Loaded {0} holiday records from {1} embedded resources for [{2}].": "Загружено {0} записей о праздниках из {1} внедрённых ресурсов для [{2}]."
 "Failed to load embedded resource [{0}]: {1}": "Не удалось загрузить внедрённый ресурс [{0}]: {1}"
 "Skipped {0} invalid holiday records from [{1}].": "Пропущено {0} недопустимых записей о праздниках из [{1}]."
 "Invalid solar term [{0}].": "Недопустимый солнечный термин [{0}]."
 "{0} {1} {2} days": "{0} {1} {2} дн."
+"Regular": "Обычный"
+"Holiday": "Праздник"
+"Make-up workday": "Перенос рабочего дня"

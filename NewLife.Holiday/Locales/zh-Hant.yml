@@ -1,7 +1,12 @@
 # 繁體中文譯文。鍵為英文源文，缺失時執行期回退英文。
+"NewLife.Holiday - Chinese Holiday Library": "NewLife.Holiday - 中國節假日識別庫"
+"Chinese holiday and adjusted-workday identification library with built-in annual holiday data and lunar festival support. Works fully offline and supports .NET Framework 4.5, .NET Standard 2.0/2.1 and modern .NET.": "中國節假日與調休識別庫，內建年度假期資料並支援農曆節日判定。完全離線執行，支援 .NET Framework 4.5、.NET Standard 2.0/2.1 與現代 .NET。"
 "The date is outside the supported lunar calendar range.": "日期超出農曆支持範圍"
 "Loaded {0} holiday records from {1} embedded resources for [{2}].": "已從 {1} 個內嵌資源載入 {0} 筆假期記錄，分類[{2}]"
 "Failed to load embedded resource [{0}]: {1}": "載入內嵌資源[{0}]失敗：{1}"
 "Skipped {0} invalid holiday records from [{1}].": "已略過[{1}]中 {0} 筆無效假期記錄"
 "Invalid solar term [{0}].": "無效節氣[{0}]"
 "{0} {1} {2} days": "{0} {1} {2}天"
+"Regular": "常規"
+"Holiday": "放假"
+"Make-up workday": "調休"
