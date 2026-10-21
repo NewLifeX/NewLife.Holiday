@@ -10,7 +10,7 @@
 #   pwsh -File sync-readme-languages.ps1 -Root D:\src\MyLib   # 下游在自己的仓根运行
 param(
     [Switch]$Check,
-    [String]$Root = $PSScriptRoot,
+    [String]$Root = (Split-Path -Parent (Split-Path -Parent $PSScriptRoot)),
     [String]$Config = "readme-languages.json"
 )
 
