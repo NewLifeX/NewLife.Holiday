@@ -288,6 +288,79 @@ public class LocalizationTests
         }
     }
 
+    [Theory]
+    [DisplayName("假期名称_按界面语言翻译")]
+    [InlineData("zh-Hans", "春节")]
+    [InlineData("zh-Hant", "春節")]
+    [InlineData("en", "Spring Festival")]
+    [InlineData("de", "Frühlingsfest")]
+    [InlineData("es", "Fiesta de la Primavera")]
+    [InlineData("fr", "Fête du Printemps")]
+    [InlineData("ja", "春節")]
+    [InlineData("ko", "춘절")]
+    [InlineData("pt", "Festival da Primavera")]
+    [InlineData("ru", "Праздник весны")]
+    [InlineData("ar", "عيد الربيع")]
+    public void HolidayName_IsLocalized(String name, String expected)
+    {
+        var saved = Localization.Culture;
+        try
+        {
+            Localization.Culture = CultureInfo.GetCultureInfo(name);
+
+            var info = new HolidayInfo { Name = "春节" };
+
+            Assert.Equal(expected, info.DisplayName);
+        }
+        finally
+        {
+            Localization.Culture = saved;
+        }
+    }
+
+    [Theory]
+    [DisplayName("假期名称_英文词表覆盖全部内置名称")]
+    [InlineData("元旦", "New Year's Day")]
+    [InlineData("春节", "Spring Festival")]
+    [InlineData("清明节", "Qingming Festival")]
+    [InlineData("劳动节", "Labour Day")]
+    [InlineData("端午节", "Dragon Boat Festival")]
+    [InlineData("中秋节", "Mid-Autumn Festival")]
+    [InlineData("国庆节", "National Day")]
+    [InlineData("三月三", "Double Third Festival")]
+    public void HolidayNames_English(String source, String expected)
+    {
+        var saved = Localization.Culture;
+        try
+        {
+            Localization.Culture = CultureInfo.GetCultureInfo("en");
+
+            Assert.Equal(expected, new HolidayInfo { Name = source }.DisplayName);
+        }
+        finally
+        {
+            Localization.Culture = saved;
+        }
+    }
+
+    [Fact]
+    [DisplayName("假期名称_未知语言回退中文原名")]
+    public void HolidayName_FallsBackToSource()
+    {
+        var saved = Localization.Culture;
+        try
+        {
+            Localization.Culture = CultureInfo.GetCultureInfo("sw-KE");
+
+            Assert.Equal("春节", new HolidayInfo { Name = "春节" }.DisplayName);
+            Assert.Null(new HolidayInfo().DisplayName);
+        }
+        finally
+        {
+            Localization.Culture = saved;
+        }
+    }
+
     [Fact]
     [DisplayName("简体中文词表_覆盖全部运行时消息")]
     public void Translate_AllKeys_zhHans()

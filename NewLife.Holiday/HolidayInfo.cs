@@ -1,4 +1,6 @@
-﻿namespace NewLife.Holiday;
+using NewLife;
+
+namespace NewLife.Holiday;
 
 /// <summary>
 /// 假期信息
@@ -8,6 +10,9 @@ public class HolidayInfo
     #region 属性
     /// <summary>名称</summary>
     public String Name { get; set; }
+
+    /// <summary>本地化名称。按当前界面语言翻译假期名称，未提供译文时回退原名</summary>
+    public String DisplayName => Name.IsNullOrEmpty() ? Name : Localization.Translate(Name);
 
     /// <summary>分类</summary>
     public String Category { get;set; }

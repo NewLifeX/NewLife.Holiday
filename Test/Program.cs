@@ -37,7 +37,7 @@ internal class Program
         //var ch = new GuangxiHoliday();
         foreach (var item in ch.Infos)
         {
-            XTrace.WriteLine("{0} {1} {2} {3}", item.Name, item.Date, item.Days, Localization.Translate(item.Status.GetDescription()));
+            XTrace.WriteLine("{0} {1} {2} {3}", item.DisplayName, item.Date, item.Days, Localization.Translate(item.Status.GetDescription()));
         }
     }
 

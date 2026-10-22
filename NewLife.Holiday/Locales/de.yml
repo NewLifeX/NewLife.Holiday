@@ -10,3 +10,12 @@
 "Regular": "Regulär"
 "Holiday": "Feiertag"
 "Make-up workday": "Ausgleichsarbeitstag"
+# 假期名称（数据源为中文，键保持中文原文）
+"元旦": "Neujahr"
+"春节": "Frühlingsfest"
+"清明节": "Qingming-Fest"
+"劳动节": "Tag der Arbeit"
+"端午节": "Drachenbootfest"
+"中秋节": "Mondfest"
+"国庆节": "Nationalfeiertag"
+"三月三": "Fest des dritten März"
