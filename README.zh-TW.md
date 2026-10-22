@@ -31,6 +31,16 @@ var dt = "2022-09-10".ToDateTime();
 var rs = dt.IsChinaHoliday();
 ```
 
+
+## 假期名稱本地化
+
+`HolidayInfo.DisplayName` 依目前介面語言傳回假期名稱，`Name` 保留中文原文。詞表內建 11 種語言，未提供譯文時回退中文。
+
+``` csharp
+var info = HolidayExtensions.China.Query("2026-02-15".ToDateTime()).FirstOrDefault();
+Console.WriteLine(info?.DisplayName); // Spring Festival
+```
+
 ## 廣西三月三
 專案從 NuGet 引用 `NewLife.Holiday`，程式碼中引入命名空間 `NewLife.Holiday`，即可使用 DateTime 擴充方法 IsGuangxiHoliday。  
 ``` csharp

@@ -31,6 +31,16 @@ var dt = "2022-09-10".ToDateTime();
 var rs = dt.IsChinaHoliday();
 ```
 
+
+## تعريب أسماء الأعياد
+
+تُرجع `HolidayInfo.DisplayName` اسم العيد باللغة الحالية للواجهة، بينما يحتفظ `Name` بالنص الصيني الأصلي. تتضمن الجدول 11 لغة، وتعود اللغات غير المدعومة إلى الصينية.
+
+``` csharp
+var info = HolidayExtensions.China.Query("2026-02-15".ToDateTime()).FirstOrDefault();
+Console.WriteLine(info?.DisplayName); // Spring Festival
+```
+
 ## مهرجان الثالث من مارس في قوانغشي
 أضف مرجع `NewLife.Holiday` من NuGet واستورد مساحة الأسماء `NewLife.Holiday` لاستخدام طريقة التوسعة `IsGuangxiHoliday` على DateTime.  
 ``` csharp

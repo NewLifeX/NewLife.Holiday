@@ -31,6 +31,16 @@ var dt = "2022-09-10".ToDateTime();
 var rs = dt.IsChinaHoliday();
 ```
 
+
+## Nomes de feriados localizados
+
+`HolidayInfo.DisplayName` retorna o nome do feriado no idioma da interface atual, enquanto `Name` mantém o texto original em chinês. A tabela cobre 11 idiomas; idiomas não suportados retornam ao chinês.
+
+``` csharp
+var info = HolidayExtensions.China.Query("2026-02-15".ToDateTime()).FirstOrDefault();
+Console.WriteLine(info?.DisplayName); // Spring Festival
+```
+
 ## Festival do 3 de março em Guangxi
 Referencie `NewLife.Holiday` a partir do NuGet e importe o namespace `NewLife.Holiday` para usar o método de extensão DateTime `IsGuangxiHoliday`.  
 ``` csharp
