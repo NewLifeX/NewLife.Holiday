@@ -5,6 +5,7 @@
 "Loaded {0} holiday records from {1} embedded resources for [{2}].": "{0} enregistrements de jours fériés chargés depuis {1} ressources incorporées pour [{2}]."
 "Failed to load embedded resource [{0}]: {1}": "Échec du chargement de la ressource incorporée [{0}] : {1}"
 "Skipped {0} invalid holiday records from [{1}].": "{0} enregistrements de jours fériés non valides ignorés depuis [{1}]."
+"No embedded resources found for [{0}].": "Aucune ressource incorporée trouvée pour [{0}]."
 "Invalid solar term [{0}].": "Terme solaire non valide [{0}]."
 "{0} {1} {2} days": "{0} {1} {2} jours"
 "Regular": "Normal"

@@ -20,7 +20,7 @@ public class HolidayTests
     [InlineData("2022/2/5", true)]
     [InlineData("2022/2/6", true)]
     [InlineData("2022/2/7", false)]
-    public void Test春节(String date, Boolean result)
+    public void Chunjie_InDataYear(String date, Boolean result)
     {
         var rs = TestDate.Parse(date).IsChinaHoliday();
 
@@ -34,7 +34,7 @@ public class HolidayTests
     [InlineData("2022/9/11", true)]
     [InlineData("2022/9/12", true)]
     [InlineData("2022/9/13", false)]
-    public void Test中秋(String date, Boolean result)
+    public void Zhongqiu_InDataYear(String date, Boolean result)
     {
         var rs = TestDate.Parse(date).IsChinaHoliday();
 
@@ -46,7 +46,7 @@ public class HolidayTests
     [InlineData("2022/1/1")]
     [InlineData("2023/1/1")]
     [InlineData("2122/1/1")]
-    public void Test元旦(String date)
+    public void Yuandan_Predict(String date)
     {
         var dt = TestDate.Parse(date);
         var rs = dt.IsChinaHoliday();
@@ -72,7 +72,7 @@ public class HolidayTests
     [InlineData("2022/4/5")]
     [InlineData("2023/4/5")]
     [InlineData("2122/4/5")]
-    public void Test清明节(String date)
+    public void Qingming_Predict(String date)
     {
         var dt = TestDate.Parse(date);
         var rs = dt.IsChinaHoliday();
@@ -99,7 +99,7 @@ public class HolidayTests
     [InlineData("2023/5/1")]
     [InlineData("2025/5/1")]
     [InlineData("2122/5/1")]
-    public void Test劳动节(String date)
+    public void Laodong_Predict(String date)
     {
         var dt = TestDate.Parse(date);
         var rs = dt.IsChinaHoliday();
@@ -126,7 +126,7 @@ public class HolidayTests
     [InlineData("2022/10/1")]
     [InlineData("2023/10/1")]
     [InlineData("2122/10/1")]
-    public void Test国庆节(String date)
+    public void Guoqing_Predict(String date)
     {
         var dt = TestDate.Parse(date);
         var rs = dt.IsChinaHoliday();
@@ -154,7 +154,7 @@ public class HolidayTests
     [InlineData("2029/2/13")]
     [InlineData("2029/2/14")]
     [InlineData("2029/2/15")]
-    public void Test春节2(String date)
+    public void Chunjie_Predict(String date)
     {
         var dt = TestDate.Parse(date);
         var rs = dt.IsChinaHoliday();
@@ -179,7 +179,7 @@ public class HolidayTests
     [Theory]
     [DisplayName("端午节推算_远期年份")]
     [InlineData("2029/6/16")]
-    public void Test端午节(String date)
+    public void Duanwu_Predict(String date)
     {
         var dt = TestDate.Parse(date);
         var rs = dt.IsChinaHoliday();
@@ -204,7 +204,7 @@ public class HolidayTests
     [Theory]
     [DisplayName("中秋节推算_远期年份")]
     [InlineData("2029/9/22")]
-    public void Test中秋节2(String date)
+    public void Zhongqiu_Predict(String date)
     {
         var dt = TestDate.Parse(date);
         var rs = dt.IsChinaHoliday();
@@ -230,7 +230,7 @@ public class HolidayTests
     [DisplayName("周末兜底判定")]
     [InlineData("2023/9/23")]
     [InlineData("2023/9/24")]
-    public void Test周末(String date)
+    public void Weekend_Fallback(String date)
     {
         var dt = TestDate.Parse(date);
         var rs = dt.IsChinaHoliday();

@@ -64,7 +64,10 @@ public class ChinaHoliday : IHoliday
             }
         }
 
-        WriteLog("Loaded {0} holiday records from {1} embedded resources for [{2}].", (Infos?.Count ?? 0) - start, files, category);
+        if (files == 0)
+            WriteWarn("No embedded resources found for [{0}].", category);
+        else
+            WriteLog("Loaded {0} holiday records from {1} embedded resources for [{2}].", (Infos?.Count ?? 0) - start, files, category);
     }
     #endregion
 
@@ -357,6 +360,11 @@ public class ChinaHoliday : IHoliday
     /// <param name="format">格式化模板</param>
     /// <param name="args">格式化参数</param>
     protected virtual void WriteLog(String format, params Object[] args) => Log?.InfoPrefixed(LogPrefix, format, args);
+
+    /// <summary>写警告日志。前缀在翻译之后拼接</summary>
+    /// <param name="format">格式化模板</param>
+    /// <param name="args">格式化参数</param>
+    protected virtual void WriteWarn(String format, params Object[] args) => Log?.WritePrefixed(LogLevel.Warn, LogPrefix, format, args);
 
     /// <summary>写错误日志。前缀在翻译之后拼接</summary>
     /// <param name="format">格式化模板</param>

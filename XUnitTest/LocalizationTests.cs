@@ -28,7 +28,7 @@ public class LocalizationTests
 
             _ = new ChinaHoliday(log);
 
-            Assert.NotEmpty(log.Lines);
+            Assert.Single(log.Lines);
             var line = log.Lines[log.Lines.Count - 1];
             Assert.StartsWith("[ChinaHoliday]", line);
             Assert.Contains("已从", line);
@@ -52,7 +52,7 @@ public class LocalizationTests
 
             _ = new ChinaHoliday(log);
 
-            Assert.NotEmpty(log.Lines);
+            Assert.Single(log.Lines);
             var line = log.Lines[log.Lines.Count - 1];
             Assert.StartsWith("[ChinaHoliday]", line);
             Assert.Contains("Loaded", line);
@@ -76,7 +76,7 @@ public class LocalizationTests
 
             _ = new GuangxiHoliday(log);
 
-            Assert.NotEmpty(log.Lines);
+            Assert.Equal(2, log.Lines.Count);
             Assert.All(log.Lines, e => Assert.StartsWith("[GuangxiHoliday]", e));
             Assert.Contains(log.Lines, e => e.Contains("[Guangxi]"));
         }
@@ -374,6 +374,7 @@ public class LocalizationTests
             Assert.Equal("已从 7 个嵌入资源加载 91 条假期记录，分类[China]", Localization.Translate("Loaded {0} holiday records from {1} embedded resources for [{2}].", 91, 7, "China"));
             Assert.Equal("加载嵌入资源[x]失败：y", Localization.Translate("Failed to load embedded resource [{0}]: {1}", "x", "y"));
             Assert.Equal("已跳过[Test]中 2 条无效假期记录", Localization.Translate("Skipped {0} invalid holiday records from [{1}].", 2, "Test"));
+            Assert.Equal("未找到[Test]的嵌入资源", Localization.Translate("No embedded resources found for [{0}].", "Test"));
             Assert.Equal("无效节气[24]", Localization.Translate("Invalid solar term [{0}].", 24));
             Assert.Equal("春分 2025-03-20 +1天", Localization.Translate("{0} {1} {2} days", "春分", "2025-03-20", "+1"));
         }
@@ -397,7 +398,7 @@ public class LocalizationTests
 
             _ = new ChinaHoliday(log);
 
-            Assert.NotEmpty(log.Lines);
+            Assert.Single(log.Lines);
             Assert.Contains("Loaded", log.Lines[log.Lines.Count - 1]);
         }
         finally
@@ -407,15 +408,63 @@ public class LocalizationTests
         }
     }
 
+    [Fact]
+    [DisplayName("默认日志_未注入时使用空日志保持静默")]
+    public void DefaultLog_IsNullLogger()
+    {
+        var holiday = new ChinaHoliday();
+
+        Assert.Same(Logger.Null, holiday.Log);
+    }
+
+    [Fact]
+    [DisplayName("加载不存在的分类_按警告输出并带前缀")]
+    public void MissingCategory_Warns()
+    {
+        var saved = Localization.LogCulture;
+        try
+        {
+            Localization.LogCulture = CultureInfo.GetCultureInfo("zh-Hans");
+            var log = new ProbeLog();
+            var holiday = new ProbeHoliday(log);
+
+            holiday.LoadCategory("NoSuch");
+
+            Assert.Equal(2, log.Lines.Count);
+            Assert.Equal(LogLevel.Info, log.Levels[0]);
+            Assert.Equal(LogLevel.Warn, log.Levels[1]);
+            Assert.StartsWith("[ProbeHoliday]", log.Lines[1]);
+            Assert.Contains("未找到[NoSuch]的嵌入资源", log.Lines[1]);
+        }
+        finally
+        {
+            Localization.LogCulture = saved;
+        }
+    }
+
+    /// <summary>暴露受保护 Load 的探针类型</summary>
+    private sealed class ProbeHoliday : ChinaHoliday
+    {
+        public ProbeHoliday(ILog log) : base(log) { }
+
+        public void LoadCategory(String category) => Load(category);
+    }
+
     private sealed class ProbeLog : ILog
     {
         public List<String> Lines { get; } = [];
+
+        public List<LogLevel> Levels { get; } = [];
 
         public Boolean Enable { get; set; } = true;
 
         public LogLevel Level { get; set; } = LogLevel.Debug;
 
-        public void Write(LogLevel level, String format, params Object[] args) => Lines.Add(args.Length > 0 ? String.Format(format, args) : format);
+        public void Write(LogLevel level, String format, params Object[] args)
+        {
+            Lines.Add(args.Length > 0 ? String.Format(format, args) : format);
+            Levels.Add(level);
+        }
 
         public void Debug(String format, params Object[] args) => Write(LogLevel.Debug, format, args);
 

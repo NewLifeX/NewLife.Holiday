@@ -41,6 +41,21 @@ Console.WriteLine(info?.DisplayName); // Spring Festival
 
 The word list ships 11 languages (English, Simplified Chinese, Traditional Chinese, Spanish, German, Japanese, French, Portuguese, Russian, Korean and Arabic); unsupported languages fall back to Chinese.
 
+## Logging
+
+`ChinaHoliday` and `GuangxiHoliday` accept an `ILog` in the constructor. The default is a null logger, so the library stays silent unless you opt in:
+
+```csharp
+using NewLife.Log;
+using NewLife.Holiday;
+
+XTrace.UseConsole();
+var holiday = new ChinaHoliday(XTrace.Log);
+// [ChinaHoliday]Loaded 91 holiday records from 7 embedded resources for [China].
+```
+
+Log messages are translated with the current log language (`Localization.LogCulture`, falling back to `Localization.Culture`).
+
 ## Documentation
 
 - [Requirements document](https://github.com/NewLifeX/NewLife.Holiday/blob/master/Doc/%E9%9C%80%E6%B1%82%E6%96%87%E6%A1%A3.md)

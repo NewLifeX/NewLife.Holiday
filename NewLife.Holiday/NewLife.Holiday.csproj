@@ -6,7 +6,7 @@
     <Description>Chinese holiday and adjusted-workday identification library with built-in annual holiday data and lunar festival support. Works fully offline and supports .NET Framework 4.5, .NET Standard 2.0/2.1 and modern .NET.</Description>
     <Company>新生命开发团队</Company>
     <Copyright>版权所有(C) 新生命开发团队 2002~2026</Copyright>
-    <VersionPrefix>1.4</VersionPrefix>
+    <VersionPrefix>1.5</VersionPrefix>
     <VersionSuffix>$([System.DateTime]::Now.ToString(`yyyy.MMdd`))</VersionSuffix>
     <Version>$(VersionPrefix).$(VersionSuffix)</Version>
     <FileVersion>$(Version)</FileVersion>
@@ -30,7 +30,7 @@
     <RepositoryUrl>https://github.com/NewLifeX/NewLife.Holiday</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>新生命团队;X组件;NewLife;$(AssemblyName)</PackageTags>
-    <PackageReleaseNotes>中国假期识别库，内置假期调休数据库，每年维护更新，支持自动识别农历节假日</PackageReleaseNotes>
+    <PackageReleaseNotes>新增假期名称与运行时消息的 11 语种本地化，支持运行时注册词表覆盖；新增 ChinaHoliday/GuangxiHoliday 日志对象注入与本地化前缀日志，默认保持静默；加载不到嵌入资源时按警告输出，避免分类拼错静默降级；修复多天假期起始日重复返回；节气计算优化；新增 Android/iOS 移动端与 NativeAOT 冒烟，单元测试扩充至 138 例；升级 NewLife.Core 至 12.0.2026.1024</PackageReleaseNotes>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.nuget.md</PackageReadmeFile>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
@@ -52,7 +52,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="NewLife.Core" Version="12.0.2026.1021-beta0321" />
+    <PackageReference Include="NewLife.Core" Version="12.0.2026.1024" />
   </ItemGroup>
 
   <ItemGroup>

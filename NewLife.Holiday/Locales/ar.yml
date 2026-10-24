@@ -5,6 +5,7 @@
 "Loaded {0} holiday records from {1} embedded resources for [{2}].": "تم تحميل {0} من سجلات العطلات من {1} من الموارد المضمّنة لـ [{2}]."
 "Failed to load embedded resource [{0}]: {1}": "فشل تحميل المورد المضمّن [{0}]: {1}"
 "Skipped {0} invalid holiday records from [{1}].": "تم تخطي {0} من سجلات العطلات غير الصالحة من [{1}]."
+"No embedded resources found for [{0}].": "لم يتم العثور على موارد مضمّنة لـ [{0}]."
 "Invalid solar term [{0}].": "مصطلح شمسي غير صالح [{0}]."
 "{0} {1} {2} days": "{0} {1} {2} أيام"
 "Regular": "عادي"

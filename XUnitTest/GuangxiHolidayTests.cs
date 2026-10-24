@@ -16,7 +16,7 @@ public class GuangxiHolidayTests
     [InlineData("2022/4/5")]
     [InlineData("2024/4/11")]
     [InlineData("2024/4/12")]
-    public void Test广西三月三(String date)
+    public void Sanyuesan_DataAndLunar(String date)
     {
         var dt = TestDate.Parse(date);
         var rs = dt.IsGuangxiHoliday();
@@ -35,7 +35,7 @@ public class GuangxiHolidayTests
     [Theory]
     [DisplayName("广西三月三_远期年份农历推算")]
     [InlineData("2029/4/16")]
-    public void Test广西三月三2(String date)
+    public void Sanyuesan_Predict(String date)
     {
         var dt = TestDate.Parse(date);
         var rs = dt.IsGuangxiHoliday();
@@ -57,7 +57,7 @@ public class GuangxiHolidayTests
     [InlineData("2023/10/7", false)]
     [InlineData("2023/10/8", false)]
     [InlineData("2023/9/23", true)]
-    public void Test广西继承中国假期(String date, Boolean result)
+    public void InheritsChinaHoliday(String date, Boolean result)
     {
         Assert.Equal(result, TestDate.Parse(date).IsGuangxiHoliday());
     }

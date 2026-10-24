@@ -41,6 +41,21 @@ var info = HolidayExtensions.China.Query("2026-02-15".ToDateTime()).FirstOrDefau
 Console.WriteLine(info?.DisplayName); // Spring Festival
 ```
 
+## Журналирование
+
+`ChinaHoliday` и `GuangxiHoliday` принимают `ILog` в конструкторе. По умолчанию используется пустой журнал, поэтому библиотека молчит, пока вы его не включите:
+
+``` csharp
+using NewLife.Log;
+using NewLife.Holiday;
+
+XTrace.UseConsole();
+var holiday = new ChinaHoliday(XTrace.Log);
+// [ChinaHoliday]Загружено 91 записей о праздниках из 7 внедрённых ресурсов для [China].
+```
+
+Тексты журнала переводятся на текущий язык журнала (`Localization.LogCulture`, иначе `Localization.Culture`).
+
 ## Праздник 3 марта в Гуанси
 Подключите `NewLife.Holiday` из NuGet и импортируйте пространство имён `NewLife.Holiday`, чтобы использовать метод расширения DateTime `IsGuangxiHoliday`.  
 ``` csharp
@@ -57,53 +72,69 @@ var rs = dt.IsGuangxiHoliday();
 - [Список функций](Doc/功能清单.md)
 - [Проектирование архитектуры](Doc/架构设计.md)
 
-## Матрица проектов NewLife
-Все проекты по умолчанию поддерживают net9.0/netstandard2.1/netstandard2.0/net4.62/net4.5; старые версии (2024.0801) поддерживают net4.0/net2.0.  
+## Карта экосистемы
 
-| Проект | Год | Описание |
-| :-----: | :--: | :---------- |
-| Базовые компоненты | | Поддерживают другие middleware- и продуктовые проекты |
-| [NewLife.Core](https://github.com/NewLifeX/X) | 2002 | Базовая библиотека: журналирование, конфигурация, кэширование, сеть, сериализация, трассировка производительности APM |
-| [NewLife.XCode](https://github.com/NewLifeX/NewLife.XCode) | 2005 | Middleware для больших данных, одна таблица с десятками миллиардов строк, MySql/SQLite/SqlServer/Oracle/PostgreSql/DaMeng, автоматическое секционирование, разделение чтения и записи |
-| [NewLife.Net](https://github.com/NewLifeX/NewLife.Net) | 2005 | Сетевая библиотека, десятки миллионов TPS на одной машине (22,66 млн tps), миллионы подключений на одной машине (4 млн длительных TCP-соединений) |
-| [NewLife.Remoting](https://github.com/NewLifeX/NewLife.Remoting) | 2011 | Библиотека протокольной связи, предоставляющая фреймворк C/S-приложений, поддерживает Http/RPC-связь, высокую пропускную способность, низкие накладные расходы и простой доступ для IoT-устройств |
-| [NewLife.Cube](https://github.com/NewLifeX/NewLife.Cube) | 2010 | Платформа быстрой разработки Cube, объединяющая права пользователей, SSO-вход, OAuth-сервер и т. д.; проверена проектами с 10 млрд строк на таблицу |
-| [NewLife.Agent](https://github.com/NewLifeX/NewLife.Agent) | 2008 | Компонент управления службами, устанавливающий приложения как демоны операционной системы: службы Windows и Linux systemd |
-| [NewLife.Zero](https://github.com/NewLifeX/NewLife.Zero) | 2020 | Каркас нового поколения: шаблоны проектов NewLife.Templates на основе экосистемы компонентов NewLife, Web, WebApi, Service |
-| Middleware | | Интеграция с известными middleware-платформами |
-| [NewLife.Redis](https://github.com/NewLifeX/NewLife.Redis) | 2017 | Клиент Redis, микросекундная задержка, миллионы TPS, богатые очереди сообщений, проверен проектами с десятками миллиардов записей |
-| [NewLife.RocketMQ](https://github.com/NewLifeX/NewLife.RocketMQ) | 2018 | Полностью управляемый клиент RocketMQ, поддерживает Apache RocketMQ и Alibaba Cloud Message Queue, проверен проектами масштаба миллиардов |
-| [NewLife.MQTT](https://github.com/NewLifeX/NewLife.MQTT) | 2019 | Протокол обмена сообщениями IoT, MqttClient/MqttServer, клиент поддерживает Alibaba Cloud IoT |
-| [NewLife.IoT](https://github.com/NewLifeX/NewLife.IoT) | 2022 | Стандартная библиотека IoT, определяющая различные стандарты протоколов связи для области IoT |
-| [NewLife.Modbus](https://github.com/NewLifeX/NewLife.Modbus) | 2022 | ModbusTcp/ModbusRTU/ModbusASCII, реализованные на стандартной библиотеке IoT, поддерживают платформу ZeroIoT и шлюз IoTEdge |
-| [NewLife.Siemens](https://github.com/NewLifeX/NewLife.Siemens) | 2022 | Протокол Siemens PLC, реализованный на стандартной библиотеке IoT, поддерживает платформу IoT и IoTEdge |
-| [NewLife.Map](https://github.com/NewLifeX/NewLife.Map) | 2022 | Библиотека картографических компонентов, обёртывающая Baidu Maps, Amap, Tencent Maps и Tianditu |
-| [NewLife.Audio](https://github.com/NewLifeX/NewLife.Audio) | 2023 | Библиотека аудиокодеков, PCM/ADPCMA/G711A/G722U/WAV/AAC |
-| Продуктовые платформы | | Уровень продуктовой платформы, готовы к компиляции и развёртыванию, настраиваемые |
-| [Stardust](https://github.com/NewLifeX/Stardust) | 2018 | Stardust, распределённая сервисная платформа: управление узлами, центр мониторинга APM, центр конфигурации, реестр, центр релизов |
-| [AntJob](https://github.com/NewLifeX/AntJob) | 2019 | AntJob, распределённая платформа вычислений для больших данных (реального времени/офлайн) с концепцией «ant-moving» секционирования, проверена проектами с триллионами данных |
-| [NewLife.ERP](https://github.com/NewLifeX/NewLife.ERP) | 2021 | Корпоративная ERP: управление продуктами, клиентами, продажами и поставщиками |
-| [CrazyCoder](https://github.com/NewLifeX/XCoder) | 2006 | Инструменты CrazyCoder: множество инструментов разработчика для сети, последовательных портов, шифрования/дешифрования, регулярных выражений, Modbus, MQTT |
-| [EasyIO](https://github.com/NewLifeX/EasyIO) | 2023 | Простое файловое хранилище с поддержкой централизованного хранения файлов в распределённых системах. |
-| [XProxy](https://github.com/NewLifeX/XProxy) | 2005 | Обратный прокси промышленного уровня: NAT-прокси, Http-прокси |
-| [HttpMeter](https://github.com/NewLifeX/HttpMeter) | 2022 | Инструмент нагрузочного тестирования Http |
-| [GitCandy](https://github.com/NewLifeX/GitCandy) | 2015 | Система управления исходным кодом Git |
-| [SmartOS](https://github.com/NewLifeX/SmartOS) | 2014 | Встраиваемая операционная система, полностью независимая, поддерживает архитектуру чипов ARM Cortex-M |
-| [SmartA2](https://github.com/NewLifeX/SmartA2) | 2019 | Встраиваемый промышленный компьютер, IoT-шлюз, высокопроизводительный хост .NET8, применяется в промышленности, сельском хозяйстве, транспорте и здравоохранении |
-| IoT-платформа FIoT | 2020 | Комплексное IoT-решение, объединяющее аппаратное и программное обеспечение и анализ больших данных для строительства, охраны окружающей среды и сельского хозяйства; проверено проектами с 100 000 точек на машину |
-| Высокоточное позиционирование UWB в помещении | 2020 | Высокоточное позиционирование в помещении с сантиметровой точностью (10–20 см), интеграция аппаратного и программного обеспечения, совместимость с другими системами, проверено в больших выставочных залах |
+NewLife — это многоуровневая экосистема независимо версионируемых open-source проектов. Карта ниже дословно используется во всех репозиториях NewLife; каждый проект ссылается на свой репозиторий и свой основной пакет NuGet.
 
-## Команда разработчиков NewLife
-![XCode](https://newlifex.com/logo.png)  
+| Проект | Что делает | Загрузки |
+| --- | --- | --- |
+| **Базовый** | | |
+| [NewLife.Core](https://github.com/NewLifeX/X) | Логирование, конфигурация, кэширование, сеть, сериализация, планирование и APM-трассировка. | [![NuGet](https://img.shields.io/nuget/dt/NewLife.Core?style=flat-square&logo=nuget&label=downloads)](https://www.nuget.org/packages/NewLife.Core) |
+| [NewLife.XCode](https://github.com/NewLifeX/NewLife.XCode) | Промежуточное ПО данных: отдельные таблицы масштаба десятков миллиардов строк, автоматическое секционирование, разделение чтения и записи, более 10 баз данных. | [![NuGet](https://img.shields.io/nuget/dt/NewLife.XCode?style=flat-square&logo=nuget&label=downloads)](https://www.nuget.org/packages/NewLife.XCode) |
+| [NewLife.Net](https://github.com/NewLifeX/NewLife.Net) | Высокопроизводительная сетевая библиотека: 1,77M pps / 14,5 Гбит/с на машину (TCP 1KB, 2026-10), 4M долгоживущих TCP-соединений. | [![NuGet](https://img.shields.io/nuget/dt/NewLife.Net?style=flat-square&logo=nuget&label=downloads)](https://www.nuget.org/packages/NewLife.Net) |
+| [NewLife.Remoting](https://github.com/NewLifeX/NewLife.Remoting) | Протокольная связь и RPC-фреймворк для клиент-серверных приложений и IoT-устройств. | [![NuGet](https://img.shields.io/nuget/dt/NewLife.Remoting?style=flat-square&logo=nuget&label=downloads)](https://www.nuget.org/packages/NewLife.Remoting) |
+| [NewLife.Agent](https://github.com/NewLifeX/NewLife.Agent) | Устанавливает .NET-приложения как демоны ОС: службы Windows и systemd в Linux. | [![NuGet](https://img.shields.io/nuget/dt/NewLife.Agent?style=flat-square&logo=nuget&label=downloads)](https://www.nuget.org/packages/NewLife.Agent) |
+| [NewLife.Templates](https://github.com/NewLifeX/NewLife.Zero) | Шаблоны проектов `dotnet new` для консоли, web, API, службы, данных и IoT. | [![NuGet](https://img.shields.io/nuget/dt/NewLife.Templates?style=flat-square&logo=nuget&label=downloads)](https://www.nuget.org/packages/NewLife.Templates) |
+| **Данные и обмен сообщениями** | | |
+| [NewLife.Redis](https://github.com/NewLifeX/NewLife.Redis) | Клиент Redis с микросекундной задержкой, миллионами операций в секунду и встроенными очередями сообщений. | [![NuGet](https://img.shields.io/nuget/dt/NewLife.Redis?style=flat-square&logo=nuget&label=downloads)](https://www.nuget.org/packages/NewLife.Redis) |
+| [NewLife.RocketMQ](https://github.com/NewLifeX/NewLife.RocketMQ) | Полностью управляемый клиент RocketMQ для Apache RocketMQ и Alibaba Cloud Message Queue. | [![NuGet](https://img.shields.io/nuget/dt/NewLife.RocketMQ?style=flat-square&logo=nuget&label=downloads)](https://www.nuget.org/packages/NewLife.RocketMQ) |
+| [NewLife.MQTT](https://github.com/NewLifeX/NewLife.MQTT) | Клиент и сервер MQTT, включая подключение к Alibaba Cloud IoT. | [![NuGet](https://img.shields.io/nuget/dt/NewLife.MQTT?style=flat-square&logo=nuget&label=downloads)](https://www.nuget.org/packages/NewLife.MQTT) |
+| [NewLife.NovaDb](https://github.com/NewLifeX/NewLife.NovaDb) | Гибридная база данных на C#: встроенная или сетевая, реляционная, временных рядов, очередь сообщений и KV в одном. | [![NuGet](https://img.shields.io/nuget/dt/NewLife.NovaDb?style=flat-square&logo=nuget&label=downloads)](https://www.nuget.org/packages/NewLife.NovaDb) |
+| [NewLife.MySql](https://github.com/NewLifeX/NewLife.MySql) | Драйвер MySql и вспомогательный слой на основе стека данных NewLife. | [![NuGet](https://img.shields.io/nuget/dt/NewLife.MySql?style=flat-square&logo=nuget&label=downloads)](https://www.nuget.org/packages/NewLife.MySql) |
+| **Web, AI и распределённые системы** | | |
+| [NewLife.Cube](https://github.com/NewLifeX/NewLife.Cube) | Фреймворк быстрой разработки админ-платформ: права, SSO, сервер OAuth и CRUD-скаффолдинг. | [![NuGet](https://img.shields.io/nuget/dt/NewLife.Cube?style=flat-square&logo=nuget&label=downloads)](https://www.nuget.org/packages/NewLife.Cube) |
+| [Stardust](https://github.com/NewLifeX/Stardust) | Распределённая сервисная платформа: управление узлами, APM, центр конфигурации, реестр и центр публикации. | [![NuGet](https://img.shields.io/nuget/dt/NewLife.Stardust?style=flat-square&logo=nuget&label=downloads)](https://www.nuget.org/packages/NewLife.Stardust) |
+| [AntJob](https://github.com/NewLifeX/AntJob) | Распределённая платформа задач и планирования данных в реальном времени с секционированием, повторами и дозаполнением. | [![NuGet](https://img.shields.io/nuget/dt/NewLife.AntJob?style=flat-square&logo=nuget&label=downloads)](https://www.nuget.org/packages/NewLife.AntJob) |
+| [NewLife.AI](https://github.com/NewLifeX/NewLife.AI) | Единый клиент для 46 поставщиков LLM плюс ChatAI — готовое веб-приложение для чата. | [![NuGet](https://img.shields.io/nuget/dt/NewLife.AI?style=flat-square&logo=nuget&label=downloads)](https://www.nuget.org/packages/NewLife.AI) |
+| **Промышленность и IoT** | | |
+| [NewLife.IoT](https://github.com/NewLifeX/NewLife.IoT) | Стандартная библиотека IoT, определяющая контракты протоколов и абстракции устройств. | [![NuGet](https://img.shields.io/nuget/dt/NewLife.IoT?style=flat-square&logo=nuget&label=downloads)](https://www.nuget.org/packages/NewLife.IoT) |
+| [NewLife.Modbus](https://github.com/NewLifeX/NewLife.Modbus) | Реализация Modbus TCP/RTU/ASCII поверх NewLife.IoT. | [![NuGet](https://img.shields.io/nuget/dt/NewLife.Modbus?style=flat-square&logo=nuget&label=downloads)](https://www.nuget.org/packages/NewLife.Modbus) |
+| [NewLife.Siemens](https://github.com/NewLifeX/NewLife.Siemens) | Протокол Siemens PLC поверх NewLife.IoT. | [![NuGet](https://img.shields.io/nuget/dt/NewLife.Siemens?style=flat-square&logo=nuget&label=downloads)](https://www.nuget.org/packages/NewLife.Siemens) |
+| [NewLife.Omron](https://github.com/NewLifeX/NewLife.Omron) | Протокол Omron PLC поверх NewLife.IoT. | [![NuGet](https://img.shields.io/nuget/dt/NewLife.Omron?style=flat-square&logo=nuget&label=downloads)](https://www.nuget.org/packages/NewLife.Omron) |
+| [NewLife.Melsec](https://github.com/NewLifeX/NewLife.Melsec) | Протокол Mitsubishi Melsec PLC поверх NewLife.IoT. | [![NuGet](https://img.shields.io/nuget/dt/NewLife.Melsec?style=flat-square&logo=nuget&label=downloads)](https://www.nuget.org/packages/NewLife.Melsec) |
+| [NewLife.OPC](https://github.com/NewLifeX/NewLife.OPC) | Клиент OPC для доступа к промышленным данным. | — |
+| [NewLife.BACnet](https://github.com/NewLifeX/NewLife.BACnet) | Стек протокола автоматизации зданий BACnet. | [![NuGet](https://img.shields.io/nuget/dt/NewLife.BACnet?style=flat-square&logo=nuget&label=downloads)](https://www.nuget.org/packages/NewLife.BACnet) |
+| [ZeroIoT](https://github.com/NewLifeX/ZeroIoT) | Лёгкая open-source платформа IoT с управлением шлюзами и устройствами. | — |
+| **Телематика транспорта** | | |
+| [NewLife.JT808](https://github.com/NewLifeX/NewLife.JT808) | Протокол позиционирования транспорта JT/T 808: более 70 типов сообщений, 2011/2013/2019. | [![NuGet](https://img.shields.io/nuget/dt/NewLife.JT808?style=flat-square&logo=nuget&label=downloads)](https://www.nuget.org/packages/NewLife.JT808) |
+| [NewLife.JT809](https://github.com/NewLifeX/NewLife.JT809) | Межплатформенный протокол JT/T 809 для органов управления транспортом. | [![NuGet](https://img.shields.io/nuget/dt/NewLife.JT809?style=flat-square&logo=nuget&label=downloads)](https://www.nuget.org/packages/NewLife.JT809) |
+| [NewLife.JT1078](https://github.com/NewLifeX/NewLife.JT1078) | Автомобильное видео JT/T 1078: разбор RTP, ремультиплексирование в FLV/fMP4 и прямая трансляция. | [![NuGet](https://img.shields.io/nuget/dt/NewLife.JT1078?style=flat-square&logo=nuget&label=downloads)](https://www.nuget.org/packages/NewLife.JT1078) |
+| **Прикладные компоненты** | | |
+| [NewLife.Office](https://github.com/NewLifeX/NewLife.Office) | Один пакет для Excel, Word, PPT, PDF и более 15 форматов документов. | [![NuGet](https://img.shields.io/nuget/dt/NewLife.Office?style=flat-square&logo=nuget&label=downloads)](https://www.nuget.org/packages/NewLife.Office) |
+| [NewLife.Audio](https://github.com/NewLifeX/NewLife.Audio) | Кроссплатформенное аудио: кодеки, ввод-вывод устройств, DSP, контейнеры и потоковая передача. | [![NuGet](https://img.shields.io/nuget/dt/NewLife.Audio?style=flat-square&logo=nuget&label=downloads)](https://www.nuget.org/packages/NewLife.Audio) |
+| [NewLife.Video](https://github.com/NewLifeX/NewLife.Video) | Видеокодеки, форматы контейнеров, обработка кадров и потоковая передача. | [![NuGet](https://img.shields.io/nuget/dt/NewLife.Video?style=flat-square&logo=nuget&label=downloads)](https://www.nuget.org/packages/NewLife.Video) |
+| [NewLife.Map](https://github.com/NewLifeX/NewLife.Map) | Единый интерфейс к Baidu, AMap, Tencent и Tianditu с геокодированием и преобразованием координат. | [![NuGet](https://img.shields.io/nuget/dt/NewLife.Map?style=flat-square&logo=nuget&label=downloads)](https://www.nuget.org/packages/NewLife.Map) |
+| [NewLife.IP](https://github.com/NewLifeX/NewLife.IP) | Геолокация IPv4 с офлайн-базой, отображаемой в память, и онлайн-API как резервом. | [![NuGet](https://img.shields.io/nuget/dt/NewLife.IP?style=flat-square&logo=nuget&label=downloads)](https://www.nuget.org/packages/NewLife.IP) |
+| **Инструменты и продукты** | | |
+| [CrazyCoder](https://github.com/NewLifeX/XCoder) | Инструменты разработчика: сеть, последовательный порт, шифрование, регулярные выражения, Modbus и MQTT. | [![NuGet](https://img.shields.io/nuget/dt/NewLife.XCoder?style=flat-square&logo=nuget&label=downloads)](https://www.nuget.org/packages/NewLife.XCoder) |
+| [GitCandy](https://github.com/NewLifeX/GitCandy) | Самостоятельно размещаемая система управления исходным кодом Git. | — |
+| [LuckyClover](https://github.com/NewLifeX/LuckyClover) | Автоматически устанавливает подходящую среду выполнения .NET при запуске на старом хосте. | — |
 
-Команда NewLife основана в 2002 году и является поставщиком отраслевых IoT-решений нового времени, специализирующимся на консалтинге по аппаратным и программным приложениям, планировании системной архитектуры и разработке.  
-Более 80 открытых проектов под руководством команды широко используются в различных отраслях, а совокупное число загрузок NuGet превышает 4 миллиона.  
-Middleware для больших данных NewLife.XCode, распределённая платформа планирования и вычислений AntJob, распределённая платформа Stardust, компонент кэширования и очередей NewLife.Redis, а также IoT-платформа FIoT команды успешно применяются в энергетике, образовании, интернете, телекоммуникациях, транспорте, логистике, промышленной автоматизации, здравоохранении, музеях и других отраслях, предоставляя клиентам множество передовых, надёжных, безопасных, качественных и легко расширяемых продуктов и услуг системной интеграции.  
-Мы будем постоянно совершенствовать наши услуги, чтобы стать долгосрочным доверенным партнёром клиентов, и благодаря непрерывным инновациям и развитию — выдающимся отечественным поставщиком IoT-услуг.  
+> Бейджи показывают основной пакет каждого проекта; пакеты тем, расширений и сателлитов перечислены на соответствующих страницах NuGet. Более 30 пакетов, не перечисленных здесь (FTP, LoRa, расширения Office, драйверы протоколов и другие), доступны в [организации NewLifeX](https://github.com/NewLifeX) и на [newlifex.com](https://newlifex.com).
 
-`Команда NewLife начала работу в 2002 году. Некоторые открытые проекты имеют более чем 20-летнюю историю, а репозиторий исходного кода хранит все изменения с 2010 года`  
-Сайт: https://newlifex.com  
-Открытый исходный код: https://github.com/newlifex  
-Группы QQ: 1600800 / 1600838  
-Официальный аккаунт WeChat:
-![智能大石头](https://www.newlifex.com/stone.jpg)
+## Команда
+
+<img src="https://newlifex.com/logo.png" width="48" align="right" alt="NewLife" />
+
+Команда NewLife основана в 2002 году и более двух десятилетий работает в экосистеме .NET и IoT, поддерживает около 100 проектов с открытым кодом (34 из них — основные) и предлагает интегрированные программно-аппаратные решения для энергетики, логистики, здравоохранения, промышленной автоматизации и интернет-отрасли. Мы следуем девизу «в учении нет старших — мастерство приносит уважение».
+
+Open-source компоненты скачали <!--nuget-total:start-->6.48M<!--nuget-total:end--> раз с NuGet (по всей экосистеме, по состоянию на 2026-10).
+
+Сайт: https://newlifex.com · Организация open source: https://github.com/NewLifeX
+
+<details>
+<summary>Официальный аккаунт WeChat: 智能大石头 (отсканируйте, чтобы подписаться)</summary>
+
+![智能大石头](https://newlifex.com/stone.jpg)
+
+</details>

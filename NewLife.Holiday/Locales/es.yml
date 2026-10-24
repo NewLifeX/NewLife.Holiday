@@ -5,6 +5,7 @@
 "Loaded {0} holiday records from {1} embedded resources for [{2}].": "Se cargaron {0} registros de días festivos desde {1} recursos incrustados para [{2}]."
 "Failed to load embedded resource [{0}]: {1}": "No se pudo cargar el recurso incrustado [{0}]: {1}"
 "Skipped {0} invalid holiday records from [{1}].": "Se omitieron {0} registros de días festivos no válidos de [{1}]."
+"No embedded resources found for [{0}].": "No se encontraron recursos incrustados para [{0}]."
 "Invalid solar term [{0}].": "Término solar no válido [{0}]."
 "{0} {1} {2} days": "{0} {1} {2} días"
 "Regular": "Normal"

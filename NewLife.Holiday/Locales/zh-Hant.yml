@@ -5,6 +5,7 @@
 "Loaded {0} holiday records from {1} embedded resources for [{2}].": "已從 {1} 個內嵌資源載入 {0} 筆假期記錄，分類[{2}]"
 "Failed to load embedded resource [{0}]: {1}": "載入內嵌資源[{0}]失敗：{1}"
 "Skipped {0} invalid holiday records from [{1}].": "已略過[{1}]中 {0} 筆無效假期記錄"
+"No embedded resources found for [{0}].": "找不到[{0}]的內嵌資源"
 "Invalid solar term [{0}].": "無效節氣[{0}]"
 "{0} {1} {2} days": "{0} {1} {2}天"
 "Regular": "常規"
