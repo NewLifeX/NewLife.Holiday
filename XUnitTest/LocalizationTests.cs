@@ -371,7 +371,7 @@ public class LocalizationTests
             Localization.Culture = CultureInfo.GetCultureInfo("zh-Hans");
 
             Assert.Equal("日期超出农历支持范围", Localization.Translate("The date is outside the supported lunar calendar range."));
-            Assert.Equal("已从 7 个嵌入资源加载 91 条假期记录，分类[China]", Localization.Translate("Loaded {0} holiday records from {1} embedded resources for [{2}].", 91, 7, "China"));
+            Assert.Equal("已从 8 个嵌入资源加载 103 条假期记录，分类[China]", Localization.Translate("Loaded {0} holiday records from {1} embedded resources for [{2}].", 103, 8, "China"));
             Assert.Equal("加载嵌入资源[x]失败：y", Localization.Translate("Failed to load embedded resource [{0}]: {1}", "x", "y"));
             Assert.Equal("已跳过[Test]中 2 条无效假期记录", Localization.Translate("Skipped {0} invalid holiday records from [{1}].", 2, "Test"));
             Assert.Equal("未找到[Test]的嵌入资源", Localization.Translate("No embedded resources found for [{0}].", "Test"));

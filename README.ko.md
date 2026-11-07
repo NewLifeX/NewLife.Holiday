@@ -51,7 +51,7 @@ using NewLife.Holiday;
 
 XTrace.UseConsole();
 var holiday = new ChinaHoliday(XTrace.Log);
-// [ChinaHoliday]7개의 포함된 리소스에서 휴일 레코드 91개를 불러왔습니다. ([China])
+// [ChinaHoliday]8개의 포함된 리소스에서 휴일 레코드 103개를 불러왔습니다. ([China])
 ```
 
 로그 문구는 현재 로그 언어로 번역됩니다(`Localization.LogCulture`, 미설정 시 `Localization.Culture`).

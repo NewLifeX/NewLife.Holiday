@@ -49,7 +49,7 @@ using NewLife.Holiday;
 
 XTrace.UseConsole();
 var holiday = new ChinaHoliday(XTrace.Log);
-// [ChinaHoliday]Loaded 91 holiday records from 7 embedded resources for [China].
+// [ChinaHoliday]Loaded 103 holiday records from 8 embedded resources for [China].
 ```
 
 Log messages are translated with the current log language (`Localization.LogCulture`, falling back to `Localization.Culture`).

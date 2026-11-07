@@ -51,7 +51,7 @@ using NewLife.Holiday;
 
 XTrace.UseConsole();
 var holiday = new ChinaHoliday(XTrace.Log);
-// [ChinaHoliday]Загружено 91 записей о праздниках из 7 внедрённых ресурсов для [China].
+// [ChinaHoliday]Загружено 103 записей о праздниках из 8 внедрённых ресурсов для [China].
 ```
 
 Тексты журнала переводятся на текущий язык журнала (`Localization.LogCulture`, иначе `Localization.Culture`).

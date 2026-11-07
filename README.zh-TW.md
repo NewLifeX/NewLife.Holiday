@@ -51,7 +51,7 @@ using NewLife.Holiday;
 
 XTrace.UseConsole();
 var holiday = new ChinaHoliday(XTrace.Log);
-// [ChinaHoliday]已從 7 個內嵌資源載入 91 筆假期記錄，分類[China]
+// [ChinaHoliday]已從 8 個內嵌資源載入 103 筆假期記錄，分類[China]
 ```
 
 記錄文字依目前記錄語言翻譯（`Localization.LogCulture`，未設定時跟隨 `Localization.Culture`）。

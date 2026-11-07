@@ -51,7 +51,7 @@ using NewLife.Holiday;
 
 XTrace.UseConsole();
 var holiday = new ChinaHoliday(XTrace.Log);
-// [ChinaHoliday]تم تحميل 91 من سجلات العطلات من 7 من الموارد المضمّنة لـ [China].
+// [ChinaHoliday]تم تحميل 103 من سجلات العطلات من 8 من الموارد المضمّنة لـ [China].
 ```
 
 تُترجم رسائل السجل وفق لغة السجل الحالية (`Localization.LogCulture`، أو `Localization.Culture` عند عدم تعيينها).

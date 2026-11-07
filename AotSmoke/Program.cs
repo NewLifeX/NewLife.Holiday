@@ -43,10 +43,10 @@ Run("中国假期-数据加载", () =>
 {
     // 嵌入式资源加载：NativeAOT 下验证 GetManifestResourceNames/Stream 全链路可用
     var count = typeof(ChinaHoliday).Assembly.GetManifestResourceNames().Count(e => e.EndsWith(".csv", StringComparison.OrdinalIgnoreCase));
-    if (count < 14) throw new Exception($"嵌入式Csv资源数量异常: {count}");
+    if (count < 15) throw new Exception($"嵌入式Csv资源数量异常: {count}");
 
     var china = new ChinaHoliday();
-    if (china.Infos.Count < 80) throw new Exception($"内置数据行数异常: {china.Infos.Count}");
+    if (china.Infos.Count < 100) throw new Exception($"内置数据行数异常: {china.Infos.Count}");
     Console.WriteLine($"[diag] csv resources={count} rows={china.Infos.Count}");
 });
 
@@ -57,7 +57,7 @@ Run("中国假期-2022春节与调休", () =>
     if ("2022/2/7".ToDateTime().IsChinaHoliday()) throw new Exception("2022/2/7（节后工作日）应为工作日");
 });
 
-Run("中国假期-2026最新数据", () =>
+Run("中国假期-2026与2027年度数据", () =>
 {
     var cases = new (String Date, Boolean Expected)[]
     {
@@ -71,6 +71,19 @@ Run("中国假期-2026最新数据", () =>
         ("2026/9/25", true),   // 中秋节
         ("2026/10/1", true),   // 国庆节
         ("2026/10/10", false), // 国庆调休上班
+        ("2027/1/1", true),    // 元旦
+        ("2027/1/31", false),  // 春节调休上班
+        ("2027/2/5", true),    // 春节假期起（除夕）
+        ("2027/2/13", true),   // 春节假期末（正月初八）
+        ("2027/2/14", false),  // 春节调休上班
+        ("2027/4/3", true),    // 清明节
+        ("2027/5/5", true),    // 劳动节假期末
+        ("2027/5/8", false),   // 劳动节调休上班
+        ("2027/6/9", true),    // 端午节
+        ("2027/9/15", true),   // 中秋节
+        ("2027/9/26", false),  // 国庆调休上班
+        ("2027/10/7", true),   // 国庆假期末
+        ("2027/10/9", false),  // 国庆调休上班
     };
     foreach (var (date, expected) in cases)
     {

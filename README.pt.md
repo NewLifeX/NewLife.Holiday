@@ -51,7 +51,7 @@ using NewLife.Holiday;
 
 XTrace.UseConsole();
 var holiday = new ChinaHoliday(XTrace.Log);
-// [ChinaHoliday]91 registros de feriados carregados de 7 recursos incorporados para [China].
+// [ChinaHoliday]103 registros de feriados carregados de 8 recursos incorporados para [China].
 ```
 
 As mensagens são traduzidas conforme o idioma de log atual (`Localization.LogCulture`, ou `Localization.Culture` se não definido).

@@ -51,7 +51,7 @@ using NewLife.Holiday;
 
 XTrace.UseConsole();
 var holiday = new ChinaHoliday(XTrace.Log);
-// [ChinaHoliday]7 個の埋め込みリソースから 91 件の休日レコードを読み込みました（[China]）
+// [ChinaHoliday]8 個の埋め込みリソースから 103 件の休日レコードを読み込みました（[China]）
 ```
 
 ログ文言は現在のログ言語で翻訳されます（`Localization.LogCulture`、未設定時は `Localization.Culture`）。

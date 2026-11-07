@@ -9,6 +9,52 @@ namespace XUnitTest;
 public class HolidayTests
 {
     [Theory]
+    [DisplayName("2027年假期安排_内置数据与调休")]
+    [InlineData("2027/1/1", true)]
+    [InlineData("2027/1/3", true)]
+    [InlineData("2027/1/4", false)]
+    [InlineData("2027/1/31", false)]
+    [InlineData("2027/2/5", true)]
+    [InlineData("2027/2/13", true)]
+    [InlineData("2027/2/14", false)]
+    [InlineData("2027/4/3", true)]
+    [InlineData("2027/4/5", true)]
+    [InlineData("2027/4/6", false)]
+    [InlineData("2027/5/1", true)]
+    [InlineData("2027/5/5", true)]
+    [InlineData("2027/5/8", false)]
+    [InlineData("2027/6/9", true)]
+    [InlineData("2027/9/15", true)]
+    [InlineData("2027/9/26", false)]
+    [InlineData("2027/10/1", true)]
+    [InlineData("2027/10/7", true)]
+    [InlineData("2027/10/9", false)]
+    public void Holiday2027(String date, Boolean result)
+    {
+        Assert.Equal(result, TestDate.Parse(date).IsChinaHoliday());
+    }
+
+    [Fact]
+    [DisplayName("2027年内置数据_覆盖长假与调休")]
+    public void Holiday2027_EmbeddedData()
+    {
+        var china = HolidayExtensions.China;
+
+        var spring = china.Query(new DateTime(2027, 2, 5)).FirstOrDefault(e => e.Name == "春节");
+        Assert.NotNull(spring);
+        Assert.Equal(9, spring.Days);
+        Assert.Equal(HolidayStatus.On, spring.Status);
+
+        var national = china.Query(new DateTime(2027, 10, 1)).FirstOrDefault(e => e.Name == "国庆节");
+        Assert.NotNull(national);
+        Assert.Equal(7, national.Days);
+
+        var makeup = china.Query(new DateTime(2027, 2, 14)).FirstOrDefault(e => e.Name == "春节");
+        Assert.NotNull(makeup);
+        Assert.Equal(HolidayStatus.Off, makeup.Status);
+    }
+
+    [Theory]
     [DisplayName("春节假期判定")]
     [InlineData("2022/1/29", false)]
     [InlineData("2022/1/30", false)]
