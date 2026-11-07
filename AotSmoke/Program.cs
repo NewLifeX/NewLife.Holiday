@@ -43,7 +43,7 @@ Run("中国假期-数据加载", () =>
 {
     // 嵌入式资源加载：NativeAOT 下验证 GetManifestResourceNames/Stream 全链路可用
     var count = typeof(ChinaHoliday).Assembly.GetManifestResourceNames().Count(e => e.EndsWith(".csv", StringComparison.OrdinalIgnoreCase));
-    if (count < 15) throw new Exception($"嵌入式Csv资源数量异常: {count}");
+    if (count < 16) throw new Exception($"嵌入式Csv资源数量异常: {count}");
 
     var china = new ChinaHoliday();
     if (china.Infos.Count < 100) throw new Exception($"内置数据行数异常: {china.Infos.Count}");
@@ -140,12 +140,24 @@ Run("广西假期-数据加载与命中", () =>
 {
     var gx = new GuangxiHoliday();
     var rows = gx.Infos.Where(e => e.Category == "Guangxi").ToList();
-    if (rows.Count < 10) throw new Exception($"广西内置数据行数异常: {rows.Count}");
+    if (rows.Count < 11) throw new Exception($"广西内置数据行数异常: {rows.Count}");
 
-    var d1 = "2026/4/18".ToDateTime();
+    // 2026 官方通知：4/17-20 连休4天
+    var d1 = "2026/4/17".ToDateTime();
     var inf = HolidayExtensions.Guangxi.Query(d1).FirstOrDefault(e => e.Category == "Guangxi");
-    if (inf?.Name != "三月三") throw new Exception("2026/4/18 应为广西三月三");
-    if (!d1.IsGuangxiHoliday()) throw new Exception("2026/4/18 广西假期判定失败");
+    if (inf?.Name != "三月三") throw new Exception("2026/4/17 应为广西三月三");
+    if (inf.Days != 4) throw new Exception($"2026/4/17 三月三天数异常: {inf.Days}");
+    if (!d1.IsGuangxiHoliday()) throw new Exception("2026/4/17 广西假期判定失败");
+    if (!"2026/4/20".ToDateTime().IsGuangxiHoliday()) throw new Exception("2026/4/20 广西假期判定失败");
+    if ("2026/4/21".ToDateTime().IsGuangxiHoliday()) throw new Exception("2026/4/21 应判定为工作日");
+
+    // 2027 预测：4/9-12 连休4天
+    var d2 = "2027/4/9".ToDateTime();
+    var inf2 = HolidayExtensions.Guangxi.Query(d2).FirstOrDefault(e => e.Category == "Guangxi");
+    if (inf2?.Name != "三月三") throw new Exception("2027/4/9 应为广西三月三预测");
+    if (inf2.Days != 4) throw new Exception($"2027/4/9 三月三预测天数异常: {inf2.Days}");
+    if (!"2027/4/12".ToDateTime().IsGuangxiHoliday()) throw new Exception("2027/4/12 广西假期判定失败");
+    if ("2027/4/13".ToDateTime().IsGuangxiHoliday()) throw new Exception("2027/4/13 应判定为工作日");
 
     // 2022/4/2 为三月三调休上班
     if ("2022/4/2".ToDateTime().IsGuangxiHoliday()) throw new Exception("2022/4/2（调休上班）应判定为工作日");

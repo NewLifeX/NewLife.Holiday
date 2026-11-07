@@ -52,6 +52,32 @@ public class GuangxiHolidayTests
     }
 
     [Theory]
+    [DisplayName("广西三月三_2026官方日期与2027预测")]
+    [InlineData("2026/4/17", true)]
+    [InlineData("2026/4/20", true)]
+    [InlineData("2026/4/21", false)]
+    [InlineData("2027/4/9", true)]
+    [InlineData("2027/4/12", true)]
+    [InlineData("2027/4/13", false)]
+    public void Sanyuesan_2026And2027(String date, Boolean result)
+    {
+        Assert.Equal(result, TestDate.Parse(date).IsGuangxiHoliday());
+    }
+
+    [Fact]
+    [DisplayName("广西2027年预测数据_四天连休")]
+    public void Sanyuesan_2027_PredictedData()
+    {
+        var inf = HolidayExtensions.Guangxi.Query(new DateTime(2027, 4, 9))
+            .FirstOrDefault(e => e.Category == "Guangxi");
+
+        Assert.NotNull(inf);
+        Assert.Equal("三月三", inf.Name);
+        Assert.Equal(4, inf.Days);
+        Assert.Equal(HolidayStatus.On, inf.Status);
+    }
+
+    [Theory]
     [DisplayName("广西判定_继承全国假期与调休")]
     [InlineData("2023/10/1", true)]
     [InlineData("2023/10/7", false)]
